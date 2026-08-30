@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Розклад викладачів — TV</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a1120;
+      --panel: #101a2e;
+      --gold: #d4a72c;
+      --live: #ff6b35;
+      --text: #f4f0e6;
+      --muted: #5f7189;
+      --divider: #22314c;
+      --today-tint: rgba(212, 167, 44, 0.07);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+    }
+
+    .board {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: radial-gradient(1200px 600px at 85% -10%, rgba(212, 167, 44, 0.08), transparent 60%), var(--bg);
+    }
+
+    /* ---- Top bar ---- */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 22px 44px 14px;
+      border-bottom: 1px solid var(--divider);
+    }
+
+    .inst {
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 700;
+      font-size: 24px;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .week-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gold);
+      border: 1px solid var(--gold);
+      border-radius: 20px;
+      padding: 6px 16px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .clock {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 42px;
+      color: var(--gold);
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+    }
+
+    .clock .date {
+      font-size: 19px;
+      color: var(--muted);
+      font-weight: 400;
+      text-transform: capitalize;
+    }
+
+    /* ---- Teacher header ---- */
+    .teacher-head {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      padding: 18px 44px 14px;
+    }
+
+    .avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, var(--gold), #8a6d1a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 700;
+      font-size: 28px;
+      color: #0a1120;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .teacher-name {
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 900;
+      font-size: 54px;
+      line-height: 1;
+    }
+
+    .teacher-sub {
+      color: var(--muted);
+      font-size: 20px;
+      margin-top: 6px;
+      font-weight: 500;
+    }
+
+    /* ---- Week grid ---- */
+    .weekwrap {
+      flex: 1;
+      padding: 0 48px 20px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .weekgrid {
+      flex: 1;
+      display: grid;
+      border: 1px solid var(--divider);
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--panel);
+    }
+
+    .cell {
+      border-right: 1px solid var(--divider);
+      border-bottom: 1px solid var(--divider);
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      min-width: 0;
+    }
+
+    .cell:last-child {
+      border-right: none;
+    }
+
+    .cell.head {
+      border-bottom: 2px solid var(--divider);
+      background: rgba(255, 255, 255, 0.02);
+      align-items: center;
+      text-align: center;
+      padding: 14px 8px;
+    }
+
+    .cell.head.today {
+      background: var(--today-tint);
+    }
+
+    .day-name {
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 700;
+      font-size: 21px;
+      text-transform: capitalize;
+    }
+
+    .cell.head.today .day-name {
+      color: var(--gold);
+    }
+
+    .time-col {
+      background: rgba(255, 255, 255, 0.02);
+      align-items: center;
+      text-align: center;
+    }
+
+    .time-col .pair-num {
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: .3px;
+      margin-bottom: 4px;
+    }
+
+    .time-col .t1 {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 22px;
+    }
+
+    .time-col .t2 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .lesson .subj {
+      font-size: 19px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .lesson .group {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .lesson .room {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      color: var(--gold);
+      margin-top: 2px;
+    }
+
+    .empty-cell {
+      color: var(--muted);
+      font-size: 17px;
+      font-style: italic;
+      opacity: .5;
+      text-align: center;
+    }
+
+    .cell.today-col {
+      background: var(--today-tint);
+    }
+
+    .cell.live {
+      background: linear-gradient(160deg, rgba(255, 107, 53, 0.18), rgba(255, 107, 53, 0.05));
+      box-shadow: inset 0 0 0 2px var(--live);
+    }
+
+    /* ---- Split cell for half-pairs ---- */
+    .cell.split {
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .half-slot {
+      flex: 1;
+      padding: 6px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      min-height: 0;
+    }
+
+    .half-slot:first-child {
+      border-bottom: 1px dashed var(--divider);
+    }
+
+    .half-slot.live {
+      background: linear-gradient(160deg, rgba(255, 107, 53, 0.18), rgba(255, 107, 53, 0.05));
+      box-shadow: inset 0 0 0 2px var(--live);
+    }
+
+    .half-slot .subj {
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .half-slot .group,
+    .half-slot .room {
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .half-slot .empty-cell {
+      font-size: 13px;
+    }
+
+    .half-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: .3px;
+      position: absolute;
+      top: 3px;
+      right: 8px;
+    }
+
+    .live-tag {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--live);
+      letter-spacing: .5px;
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: .4;
+      }
+    }
+
+    /* ---- Footer ---- */
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 48px 22px;
+    }
+
+    .dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--divider);
+    }
+
+    .dot.active {
+      background: var(--gold);
+      width: 24px;
+      border-radius: 5px;
+      transition: all .3s;
+    }
+
+    .next-teacher {
+      color: var(--muted);
+      font-size: 14px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .next-teacher b {
+      color: var(--text);
+    }
+
+    /* ---- Logo / banner ---- */
+    .inst-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-img {
+      height: 40px;
+      max-width: 120px;
+      object-fit: contain;
+    }
+
+    .banner {
+      width: 100%;
+      height: 84px;
+      background-size: cover;
+      background-position: center;
+      border-bottom: 1px solid var(--divider);
+    }
+
+    /* ---- Debug panel ---- */
+    .debug-panel {
+      display: none;
+      position: fixed;
+      bottom: 16px;
+      left: 16px;
+      z-index: 999;
+      background: rgba(10, 17, 32, 0.95);
+      border: 1px solid var(--gold);
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--text);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .debug-panel.show {
+      display: block;
+    }
+
+    .debug-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+
+    .debug-hint {
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 11px;
+    }
+
+    .debug-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .debug-label {
+      color: var(--muted);
+      min-width: 190px;
+    }
+
+    .debug-value {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .debug-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      background: var(--panel);
+      color: var(--text);
+      border: 1px solid var(--divider);
+      border-radius: 6px;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    .debug-btn.active {
+      background: var(--gold);
+      color: #0a1120;
+      border-color: var(--gold);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="board">
+    <div class="topbar">
+      <div class="inst-group">
+        <img id="logoImg" class="logo-img" style="display:none">
+        <div class="inst">Розклад викладачів</div>
+      </div>
+      <div class="topbar-right">
+        <div class="week-badge" id="weekbadge">—</div>
+        <div class="clock"><span id="time">--:--:--</span><span class="date" id="date">—</span></div>
+      </div>
+    </div>
+
+    <div class="banner" id="banner" style="display:none"></div>
+
+    <div class="teacher-head">
+      <div class="avatar" id="avatar">Б</div>
+      <div>
+        <div class="teacher-name" id="tname">—</div>
+        <div class="teacher-sub" id="tsub">—</div>
+      </div>
+    </div>
+
+    <div class="weekwrap">
+      <div class="weekgrid" id="weekgrid"></div>
+    </div>
+
+    <div class="footer">
+      <div class="dots" id="dots"></div>
+      <div class="next-teacher" id="nextteacher">Далі: <b>—</b></div>
+    </div>
+  </div>
+
+  <!-- ==================== ДЕБАГ-ПАНЕЛЬ (натисніть «d», щоб показати/сховати) ==================== -->
+  <div class="debug-panel" id="debugPanel">
+    <div class="debug-title">Дебаг-режим <span class="debug-hint">(клавіша D — сховати)</span></div>
+    <div class="debug-row">
+      <span class="debug-label">Тиждень:</span>
+      <button class="debug-btn" id="dbgAuto" data-week="auto">Авто</button>
+      <button class="debug-btn" id="dbgNum" data-week="numerator">Чисельник</button>
+      <button class="debug-btn" id="dbgDen" data-week="denominator">Знаменник</button>
+    </div>
+    <div class="debug-row">
+      <span class="debug-label">Поточна пара (реальний час):</span>
+      <span class="debug-value" id="dbgCurrentPeriod">—</span>
+    </div>
+    <div class="debug-row">
+      <span class="debug-label">Тест «ЗАРАЗ»-підсвітки:</span>
+      <button class="debug-btn" id="dbgRandomPeriod">🎲 Випадкова пара</button>
+      <button class="debug-btn" id="dbgRealTime">Реальний час</button>
+      <span class="debug-value" id="dbgForcedPeriod">не форсовано</span>
+    </div>
+    <div class="debug-row">
+      <span class="debug-label">Розрахований тиждень (авто):</span>
+      <span class="debug-value" id="dbgAutoWeek">—</span>
+    </div>
+    <div class="debug-row">
+      <span class="debug-label">Викладач:</span>
+      <button class="debug-btn" id="dbgNextTeacher">Наступний ▶</button>
+    </div>
+  </div>
+
+  <script>
+    // ===================== Конфіг за замовчуванням =====================
+    // semesterStart — понеділок тижня, який вважається ЧИСЕЛЬНИКОМ (перший тиждень відліку).
+    // Тиждень авто-визначається від цієї дати: парна різниця тижнів → чисельник, непарна → знаменник.
+    const DEFAULT_CONFIG = {
+      semesterStart: "2026-09-01",
+      scheduleUrl: "", // необов'язково: посилання на schedule.json (напр. з OneDrive), інакше береться локальний schedule.json поруч
+      logo: "",
+      banner: ""
+    };
+
+    const WEEKDAYS = ["Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця"];
+
+    const PERIODS = [
+      {num: 1, time: "08:30-09:50"},
+      {num: 2, time: "10:10-11:30"},
+      {num: 3, time: "11:50-13:10"},
+      {num: 4, time: "13:30-14:50"},
+      {num: 5, time: "15:05-16:25"},
+      {num: 6, time: "16:40-18:00"},
+      {num: 7, time: "18:10-19:30"},
+      {num: 8, time: "19:40-21:00"},
+    ];
+
+    // Дані більше не зашиваються у файл — TV читає schedule.json (експортований з адмінки),
+    // localStorage (той самий браузер) або показує заглушку "немає даних".
+    const DEFAULT_TEACHERS = [];
+
+    const ROTATE_MS = 12000; // однаковий час показу для КОЖНОГО викладача
+    let teacherIdx = 0;
+    let teachers = DEFAULT_TEACHERS;
+    let config = DEFAULT_CONFIG;
+
+    function initials(name) {return name.trim().split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase();}
+    function toMin(hhmm) {const [h, m] = hhmm.split(":").map(Number); return h * 60 + m;}
+
+    // ---- Визначення поточного тижня (чисельник/знаменник) ----
+    function mondayOf(d) {
+      const day = d.getDay(); // 0=Нд..6=Сб
+      const diff = (day === 0 ? -6 : 1 - day);
+      return new Date(d.getFullYear(), d.getMonth(), d.getDate() + diff);
+    }
+    function getWeekType(semesterStartStr) {
+      const start = mondayOf(new Date(semesterStartStr + "T00:00:00"));
+      const now = mondayOf(new Date());
+      const diffDays = Math.round((now - start) / 86400000);
+      const weeksDiff = Math.floor(diffDays / 7);
+      const mod = ((weeksDiff % 2) + 2) % 2;
+      return mod === 0 ? "numerator" : "denominator";
+    }
+
+    // ---- Дебаг: ручне перемикання тижня + індикатор поточної пари ----
+    let debugWeekOverride = null; // null = авто, або 'numerator' / 'denominator'
+    let debugPeriodOverride = null; // null = реальний час, або число 1..7 — форсує підсвітку "ЗАРАЗ" на цій парі (для сьогоднішнього дня)
+
+    function getCurrentPeriodInfo() {
+      const now = new Date();
+      const nowMin = now.getHours() * 60 + now.getMinutes();
+      for (const p of PERIODS) {
+        const [t1, t2] = p.time.split('-');
+        if (nowMin >= toMin(t1) && nowMin <= toMin(t2)) {
+          return {period: p.num, label: `${p.num} пара (${p.time})`};
+        }
+      }
+      return {period: null, label: 'перерва / поза розкладом'};
+    }
+
+    function updateDebugPanel(autoWeekType) {
+      document.getElementById('dbgAutoWeek').textContent = autoWeekType === 'numerator' ? 'Чисельник' : 'Знаменник';
+      document.getElementById('dbgCurrentPeriod').textContent = getCurrentPeriodInfo().label;
+      document.getElementById('dbgAuto').classList.toggle('active', debugWeekOverride === null);
+      document.getElementById('dbgNum').classList.toggle('active', debugWeekOverride === 'numerator');
+      document.getElementById('dbgDen').classList.toggle('active', debugWeekOverride === 'denominator');
+      document.getElementById('dbgForcedPeriod').textContent = debugPeriodOverride
+        ? `пара ${debugPeriodOverride} (${PERIODS.find(p => p.num === debugPeriodOverride).time})`
+        : 'не форсовано';
+      document.getElementById('dbgRealTime').classList.toggle('active', debugPeriodOverride === null);
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key.toLowerCase() === 'd') {
+        document.getElementById('debugPanel').classList.toggle('show');
+      }
+    });
+    document.getElementById('dbgAuto').onclick = () => {debugWeekOverride = null; render();};
+    document.getElementById('dbgNum').onclick = () => {debugWeekOverride = 'numerator'; render();};
+    document.getElementById('dbgDen').onclick = () => {debugWeekOverride = 'denominator'; render();};
+    document.getElementById('dbgRandomPeriod').onclick = () => {
+      // випадкова пара з 1..PERIODS.length, гарантовано інша, ніж поточна форсована
+      const nums = PERIODS.map(p => p.num).filter(n => n !== debugPeriodOverride);
+      debugPeriodOverride = nums[Math.floor(Math.random() * nums.length)];
+      render();
+    };
+    document.getElementById('dbgRealTime').onclick = () => {debugPeriodOverride = null; render();};
+    document.getElementById('dbgNextTeacher').onclick = () => rotate();
+
+    function applyBrand() {
+      const logoImg = document.getElementById('logoImg');
+      if (config.logo) {logoImg.src = config.logo; logoImg.style.display = '';}
+      else {logoImg.style.display = 'none';}
+
+      const banner = document.getElementById('banner');
+      if (config.banner) {banner.style.backgroundImage = `url("${config.banner}")`; banner.style.display = '';}
+      else {banner.style.display = 'none';}
+    }
+
+    function renderLessonInner(lesson, isLive) {
+      return `${isLive ? '<span class="live-tag">● ЗАРАЗ</span>' : ''}
+        <div class="subj">${lesson.subj}</div>
+        <div class="group">${lesson.group}</div>
+        <div class="room">ауд. ${lesson.room}</div>`;
+    }
+
+    function render() {
+      applyBrand();
+
+      // ---- Порожній стан: викладачів ще не додано ----
+      if (!teachers.length) {
+        document.getElementById('tname').textContent = 'Немає даних';
+        document.getElementById('tsub').textContent = 'Додайте викладачів в адмінці та експортуйте schedule.json';
+        document.getElementById('avatar').textContent = '?';
+        document.getElementById('weekgrid').innerHTML = '';
+        document.getElementById('dots').innerHTML = '';
+        document.getElementById('nextteacher').innerHTML = '';
+        return;
+      }
+
+      const teacher = teachers[teacherIdx];
+      document.getElementById('tname').textContent = teacher.name;
+      document.getElementById('tsub').textContent = "Розклад занять";
+
+      const avatarEl = document.getElementById('avatar');
+      if (teacher.photo) {
+        const pos = teacher.photoPos || {x: 50, y: 50, zoom: 130};
+        avatarEl.innerHTML = `<img src="${teacher.photo}" alt="" style="object-position:${pos.x}% ${pos.y}%; transform:scale(${(pos.zoom / 100).toFixed(2)});">`;
+      } else {
+        avatarEl.textContent = initials(teacher.name);
+      }
+
+      const autoWeekType = getWeekType(config.semesterStart);
+      const weekType = debugWeekOverride || autoWeekType;
+      const badge = document.getElementById('weekbadge');
+      badge.textContent = weekType === 'numerator' ? 'Чисельник' : 'Знаменник';
+      updateDebugPanel(autoWeekType);
+
+      const scheduleForWeek = (teacher.schedule && teacher.schedule[weekType]) || {};
+
+      const now = new Date();
+      const nowMin = now.getHours() * 60 + now.getMinutes();
+      const jsDay = now.getDay(); // 0=Нд..6=Сб
+      const todayName = (jsDay >= 1 && jsDay <= 5) ? WEEKDAYS[jsDay - 1] : null;
+
+      const grid = document.getElementById('weekgrid');
+      grid.style.gridTemplateColumns = `150px repeat(${WEEKDAYS.length}, 1fr)`;
+      grid.style.gridTemplateRows = `64px repeat(${PERIODS.length}, 1fr)`;
+
+      let html = '';
+      html += `<div class="cell time-col head"></div>`;
+      WEEKDAYS.forEach(day => {
+        const isToday = day === todayName;
+        html += `<div class="cell head ${isToday ? 'today' : ''}">
+      <div class="day-name">${day}</div>
+    </div>`;
+      });
+
+      PERIODS.forEach(period => {
+        const [t1, t2] = period.time.split('-');
+        html += `<div class="cell time-col">
+      <div class="pair-num">${period.num} пара</div>
+      <div class="t1">${t1}</div>
+      <div class="t2">${t2}</div>
+    </div>`;
+        WEEKDAYS.forEach(day => {
+          const isToday = day === todayName;
+          const lessons = (scheduleForWeek[day] || []).filter(l => Number(l.period) === period.num);
+          const full = lessons.find(l => !l.half);
+          const half1 = lessons.find(l => Number(l.half) === 1);
+          const half2 = lessons.find(l => Number(l.half) === 2);
+
+          // Якщо активний форсований режим (debugPeriodOverride),
+          // підсвічуємо обрану пару у ВСІХ днях (або можна обмежити лише за необхідності), 
+          // ігноруючи перевірку isToday.
+          const isLive = debugPeriodOverride
+            ? period.num === debugPeriodOverride
+            : (isToday && nowMin >= toMin(t1) && nowMin <= toMin(t2));
+
+          if (full) {
+            html += `<div class="cell lesson ${isToday ? 'today-col' : ''} ${isLive ? 'live' : ''}">
+          ${renderLessonInner(full, isLive)}
+        </div>`;
+          } else if (half1 || half2) {
+            html += `<div class="cell ${isToday ? 'today-col' : ''} split">
+          <div class="half-slot lesson ${isLive ? 'live' : ''}">
+            <span class="half-tag">1-ша пол.</span>
+            ${half1 ? renderLessonInner(half1, isLive) : '<div class="empty-cell">—</div>'}
+          </div>
+          <div class="half-slot lesson ${isLive ? 'live' : ''}">
+            <span class="half-tag">2-га пол.</span>
+            ${half2 ? renderLessonInner(half2, isLive) : '<div class="empty-cell">—</div>'}
+          </div>
+        </div>`;
+          } else {
+            html += `<div class="cell ${isToday ? 'today-col' : ''}"><div class="empty-cell">—</div></div>`;
+          }
+        });
+      });
+
+      grid.innerHTML = html;
+
+      const dots = document.getElementById('dots');
+      dots.innerHTML = teachers.map((_, i) => `<div class="dot ${i === teacherIdx ? 'active' : ''}"></div>`).join('');
+
+      const next = teachers[(teacherIdx + 1) % teachers.length];
+      document.getElementById('nextteacher').innerHTML = `Далі: <b>${next.name}</b>`;
+    }
+
+    function tick() {
+      const now = new Date();
+      document.getElementById('time').textContent = now.toLocaleTimeString('uk-UA');
+      document.getElementById('date').textContent = now.toLocaleDateString('uk-UA', {weekday: 'long', day: 'numeric', month: 'long'});
+      document.getElementById('dbgCurrentPeriod').textContent = getCurrentPeriodInfo().label;
+    }
+    setInterval(tick, 1000); tick();
+
+    function rotate() {
+      if (!teachers.length) return;
+      teacherIdx = (teacherIdx + 1) % teachers.length;
+      render();
+    }
+
+    // ---- Завантаження даних ----
+    // Пріоритет: 1) config.scheduleUrl (напр. пряме посилання на файл у OneDrive) якщо задано в самих даних
+    //            2) локальний schedule.json поруч із цим файлом (напр. синхронізована папка OneDrive + локальний сервер)
+    //            3) localStorage (той самий браузер, що і адмінка)
+    //            4) вбудовані дані за замовчуванням
+    async function fetchJson(url) {
+      const res = await fetch(url, {cache: 'no-store'});
+      if (!res.ok) throw new Error('bad status');
+      return res.json();
+    }
+
+    async function loadData() {
+      // спершу локальний schedule.json — з нього ж читаємо, чи не вказано зовнішній scheduleUrl
+      let payload = null;
+      try {payload = await fetchJson('schedule.json');} catch (e) { }
+
+      if (payload && payload.config && payload.config.scheduleUrl) {
+        try {payload = await fetchJson(payload.config.scheduleUrl);} catch (e) { /* лишаємо те, що є */}
+      }
+
+      if (!payload) {
+        try {
+          const raw = localStorage.getItem('rozklad_data');
+          if (raw) payload = JSON.parse(raw);
+        } catch (e) { }
+      }
+
+      if (payload && Array.isArray(payload.teachers) && payload.teachers.length) {
+        return {
+          teachers: payload.teachers,
+          config: Object.assign({}, DEFAULT_CONFIG, payload.config || {})
+        };
+      }
+      return {teachers: DEFAULT_TEACHERS, config: DEFAULT_CONFIG};
+    }
+
+    async function init() {
+      const data = await loadData();
+      teachers = data.teachers;
+      config = data.config;
+      render();
+      setInterval(rotate, ROTATE_MS);
+      setInterval(async () => {
+        const fresh = await loadData();
+        teachers = fresh.teachers;
+        config = fresh.config;
+        if (teacherIdx >= teachers.length) teacherIdx = 0;
+      }, 60000);
+    }
+    init();
+  </script>
+</body>
+
+</html>
