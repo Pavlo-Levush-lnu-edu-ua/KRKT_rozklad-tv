@@ -1,5 +1,5 @@
 export const config = {
-  matcher: ['/rozklad-admin.html', '/rozklad-admin', 'k5v-rozklad-admin.html', 'k5v-rozklad-admin'],
+    matcher: ['/rozklad-admin.html', '/rozklad-admin', '/k5v-rozklad-admin.html', '/k5v-rozklad-admin'],
 };
 
 export default function middleware(request) {
