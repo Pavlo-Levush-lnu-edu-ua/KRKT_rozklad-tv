@@ -576,6 +576,7 @@
 
     <div class="panel toolbar">
       <button class="btn-gold" id="btnAddTeacher">+ Додати викладача</button>
+      <button class="btn-outline" id="btnSortAlpha">А-Я Сортувати за алфавітом</button>
       <button class="btn-outline" id="btnExport">Експортувати JSON (schedule.json)</button>
       <button class="btn-outline" id="btnImportTrigger">Імпортувати JSON</button>
       <input type="file" id="fileImport" accept="application/json">
@@ -938,6 +939,14 @@
         const last = inputs[inputs.length - 1];
         if (last) last.focus();
       };
+
+    document.getElementById('btnSortAlpha').onclick = () => {
+      // Сортуємо сам масив викладачів за іменем (українська локаль, регістр не важливий).
+      // activeTab прив'язаний до індексу в масиві, тож після зміни порядку скидаємо його на "чисельник" для всіх.
+      teachers.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'uk', {sensitivity: 'base'}));
+      activeTab = {};
+      render(); save();
+    };
 
     document.getElementById('btnExport').onclick = () => {
       const blob = new Blob([JSON.stringify({config, teachers}, null, 2)], {type: 'application/json'});

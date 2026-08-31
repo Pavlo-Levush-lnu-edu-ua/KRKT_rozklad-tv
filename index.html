@@ -49,13 +49,13 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 22px 44px 14px;
+      padding: 12px 44px 8px;
     }
 
     .inst {
       font-family: 'Unbounded', sans-serif;
       font-weight: 700;
-      font-size: 24px;
+      font-size: 19px;
       letter-spacing: 0.5px;
       color: var(--muted);
       text-transform: uppercase;
@@ -64,17 +64,17 @@
     .topbar-right {
       display: flex;
       align-items: center;
-      gap: 18px;
+      gap: 16px;
     }
 
     .week-badge {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--gold);
       border: 1px solid var(--gold);
       border-radius: 20px;
-      padding: 6px 16px;
+      padding: 5px 14px;
       text-transform: uppercase;
       letter-spacing: .5px;
     }
@@ -82,15 +82,15 @@
     .clock {
       font-family: 'JetBrains Mono', monospace;
       font-weight: 700;
-      font-size: 42px;
+      font-size: 30px;
       color: var(--gold);
       display: flex;
       align-items: baseline;
-      gap: 14px;
+      gap: 12px;
     }
 
     .clock .date {
-      font-size: 19px;
+      font-size: 15px;
       color: var(--muted);
       font-weight: 400;
       text-transform: capitalize;
@@ -113,13 +113,13 @@
     .teacher-head {
       display: flex;
       align-items: center;
-      gap: 22px;
-      padding: 18px 44px 14px;
+      gap: 18px;
+      padding: 10px 44px 8px;
     }
 
     .avatar {
-      width: 72px;
-      height: 72px;
+      width: 54px;
+      height: 54px;
       border-radius: 50%;
       background: linear-gradient(145deg, var(--gold), #8a6d1a);
       display: flex;
@@ -127,7 +127,7 @@
       justify-content: center;
       font-family: 'Unbounded', sans-serif;
       font-weight: 700;
-      font-size: 28px;
+      font-size: 21px;
       color: #0a1120;
       flex-shrink: 0;
       overflow: hidden;
@@ -143,21 +143,21 @@
     .teacher-name {
       font-family: 'Unbounded', sans-serif;
       font-weight: 900;
-      font-size: 54px;
+      font-size: 38px;
       line-height: 1;
     }
 
     .teacher-sub {
       color: var(--muted);
-      font-size: 20px;
-      margin-top: 6px;
+      font-size: 16px;
+      margin-top: 4px;
       font-weight: 500;
     }
 
     /* ---- Week grid ---- */
     .weekwrap {
       flex: 1;
-      padding: 0 48px 20px;
+      padding: 0 48px 12px;
       overflow: hidden;
       display: flex;
     }
@@ -174,12 +174,14 @@
     .cell {
       border-right: 1px solid var(--divider);
       border-bottom: 1px solid var(--divider);
-      padding: 10px 12px;
+      padding: 6px 12px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       position: relative;
       min-width: 0;
+      min-height: 0;
+      overflow: hidden;
     }
 
     .cell:last-child {
@@ -191,7 +193,7 @@
       background: rgba(255, 255, 255, 0.02);
       align-items: center;
       text-align: center;
-      padding: 14px 8px;
+      padding: 8px 8px;
     }
 
     .cell.head.today {
@@ -201,7 +203,7 @@
     .day-name {
       font-family: 'Unbounded', sans-serif;
       font-weight: 700;
-      font-size: 21px;
+      font-size: 17px;
       text-transform: capitalize;
     }
 
@@ -218,43 +220,43 @@
     .time-col .pair-num {
       font-family: 'Unbounded', sans-serif;
       font-weight: 700;
-      font-size: 15px;
+      font-size: 13px;
       color: var(--gold);
       text-transform: uppercase;
       letter-spacing: .3px;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
 
     .time-col .t1 {
       font-family: 'JetBrains Mono', monospace;
       font-weight: 700;
-      font-size: 22px;
+      font-size: 18px;
     }
 
     .time-col .t2 {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 14px;
+      font-size: 12px;
       color: var(--muted);
     }
 
     .lesson .subj {
-      font-size: 19px;
+      font-size: 16px;
       font-weight: 600;
-      line-height: 1.3;
+      line-height: 1.2;
     }
 
     .lesson .group {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 15px;
+      font-size: 13px;
       color: var(--muted);
-      margin-top: 6px;
+      margin-top: 3px;
     }
 
     .lesson .room {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 15px;
+      font-size: 13px;
       color: var(--gold);
-      margin-top: 2px;
+      margin-top: 1px;
     }
 
     .empty-cell {
@@ -283,12 +285,13 @@
 
     .half-slot {
       flex: 1;
-      padding: 6px 12px;
+      padding: 4px 12px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       position: relative;
       min-height: 0;
+      overflow: hidden;
     }
 
     .half-slot:first-child {
@@ -356,7 +359,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 48px 22px;
+      padding: 8px 48px 14px;
     }
 
     .dots {
@@ -397,7 +400,7 @@
 
     .logo-img {
       /* height: 40px; */
-      max-width: 320px;
+      max-width: 220px;
       object-fit: contain;
     }
 
@@ -486,7 +489,6 @@
     <div class="topbar">
       <div class="inst-group">
         <img id="logoImg" class="logo-img" style="display:none">
-        <!-- <div class="inst">Розклад викладачів</div> -->
       </div>
       <div class="topbar-right">
         <div class="week-badge" id="weekbadge">—</div>
@@ -530,7 +532,8 @@
       <span class="debug-value" id="dbgCurrentPeriod">—</span>
     </div>
     <div class="debug-row" id="dbgWeekendWarning" style="display:none">
-      <span class="debug-warning">⚠ Сьогодні вихідний — реальний час нічого не підсвітить (тільки Пн–Пт). Скористайтесь «🎲 Випадкова пара».</span>
+      <span class="debug-warning">⚠ Сьогодні вихідний — реальний час нічого не підсвітить (тільки Пн–Пт). Скористайтесь
+        «🎲 Випадкова пара».</span>
     </div>
     <div class="debug-row">
       <span class="debug-label">Тест «ЗАРАЗ»-підсвітки:</span>
@@ -701,8 +704,8 @@
       const todayName = (jsDay >= 1 && jsDay <= 5) ? WEEKDAYS[jsDay - 1] : null;
 
       const grid = document.getElementById('weekgrid');
-      grid.style.gridTemplateColumns = `150px repeat(${WEEKDAYS.length}, 1fr)`;
-      grid.style.gridTemplateRows = `64px repeat(${PERIODS.length}, 1fr)`;
+      grid.style.gridTemplateColumns = `140px repeat(${WEEKDAYS.length}, 1fr)`;
+      grid.style.gridTemplateRows = `48px repeat(${PERIODS.length}, minmax(0, 1fr))`;
 
       let html = '';
       html += `<div class="cell time-col head"></div>`;
@@ -737,11 +740,11 @@
           } else if (half1 || half2) {
             html += `<div class="cell ${isToday ? 'today-col' : ''} split">
           <div class="half-slot lesson ${isLive ? 'live' : ''}">
-            <span class="half-tag">1-ша пол.</span>
+            <span class="half-tag"></span>
             ${half1 ? renderLessonInner(half1, isLive) : '<div class="empty-cell">—</div>'}
           </div>
           <div class="half-slot lesson ${isLive ? 'live' : ''}">
-            <span class="half-tag">2-га пол.</span>
+            <span class="half-tag"></span>
             ${half2 ? renderLessonInner(half2, isLive) : '<div class="empty-cell">—</div>'}
           </div>
         </div>`;
