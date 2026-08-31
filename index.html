@@ -50,7 +50,6 @@
       justify-content: space-between;
       align-items: center;
       padding: 22px 44px 14px;
-      border-bottom: 1px solid var(--divider);
     }
 
     .inst {
@@ -98,6 +97,19 @@
     }
 
     /* ---- Teacher header ---- */
+    .scene {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      opacity: 1;
+      transition: opacity 0.45s ease;
+    }
+
+    .scene.fade {
+      opacity: 0;
+    }
+
     .teacher-head {
       display: flex;
       align-items: center;
@@ -384,8 +396,8 @@
     }
 
     .logo-img {
-      height: 40px;
-      max-width: 120px;
+      /* height: 40px; */
+      max-width: 320px;
       object-fit: contain;
     }
 
@@ -484,16 +496,18 @@
 
     <div class="banner" id="banner" style="display:none"></div>
 
-    <div class="teacher-head">
-      <div class="avatar" id="avatar">Б</div>
-      <div>
-        <div class="teacher-name" id="tname">—</div>
-        <div class="teacher-sub" id="tsub">—</div>
+    <div class="scene" id="scene">
+      <div class="teacher-head">
+        <div class="avatar" id="avatar">Б</div>
+        <div>
+          <div class="teacher-name" id="tname">—</div>
+          <div class="teacher-sub" id="tsub">—</div>
+        </div>
       </div>
-    </div>
 
-    <div class="weekwrap">
-      <div class="weekgrid" id="weekgrid"></div>
+      <div class="weekwrap">
+        <div class="weekgrid" id="weekgrid"></div>
+      </div>
     </div>
 
     <div class="footer">
@@ -514,6 +528,9 @@
     <div class="debug-row">
       <span class="debug-label">Поточна пара (реальний час):</span>
       <span class="debug-value" id="dbgCurrentPeriod">—</span>
+    </div>
+    <div class="debug-row" id="dbgWeekendWarning" style="display:none">
+      <span class="debug-warning">⚠ Сьогодні вихідний — реальний час нічого не підсвітить (тільки Пн–Пт). Скористайтесь «🎲 Випадкова пара».</span>
     </div>
     <div class="debug-row">
       <span class="debug-label">Тест «ЗАРАЗ»-підсвітки:</span>
@@ -537,7 +554,7 @@
     // Тиждень авто-визначається від цієї дати: парна різниця тижнів → чисельник, непарна → знаменник.
     const DEFAULT_CONFIG = {
       semesterStart: "2026-09-01",
-      scheduleUrl: "https://lnueduua-my.sharepoint.com/personal/pavlo_levush_lnu_edu_ua/_layouts/15/download.aspx?SourceUrl=%2Fpersonal%2Fpavlo%5Flevush%5Flnu%5Fedu%5Fua%2FDocuments%2F%D0%9A%D0%A0%D0%9A%D0%A2%2F%D0%9C%D0%B0%D1%82%D0%B5%D1%80%D1%96%D0%B0%D0%BB%D0%B8%20%D0%BA%D0%B0%D1%84%D0%B5%D0%B4%D1%80%D0%B8%2Frozklad%2Dtv%2Fschedule%2Ejson", 
+      scheduleUrl: "", // необов'язково: посилання на schedule.json (напр. з OneDrive), інакше береться локальний schedule.json поруч
       logo: "",
       banner: ""
     };
@@ -709,10 +726,6 @@
           const full = lessons.find(l => !l.half);
           const half1 = lessons.find(l => Number(l.half) === 1);
           const half2 = lessons.find(l => Number(l.half) === 2);
-
-          // Якщо активний форсований режим (debugPeriodOverride),
-          // підсвічуємо обрану пару у ВСІХ днях (або можна обмежити лише за необхідності), 
-          // ігноруючи перевірку isToday.
           const isLive = debugPeriodOverride
             ? period.num === debugPeriodOverride
             : (isToday && nowMin >= toMin(t1) && nowMin <= toMin(t2));
@@ -755,10 +768,18 @@
     }
     setInterval(tick, 1000); tick();
 
+    const FADE_MS = 450; // має збігатись із transition в CSS (.scene)
+
     function rotate() {
       if (!teachers.length) return;
-      teacherIdx = (teacherIdx + 1) % teachers.length;
-      render();
+      const scene = document.getElementById('scene');
+      scene.classList.add('fade');
+      setTimeout(() => {
+        teacherIdx = (teacherIdx + 1) % teachers.length;
+        render();
+        // невелика затримка, щоб браузер встиг застосувати новий вміст перед fade-in
+        requestAnimationFrame(() => requestAnimationFrame(() => scene.classList.remove('fade')));
+      }, FADE_MS);
     }
 
     // ---- Завантаження даних ----
@@ -802,7 +823,11 @@
       teachers = data.teachers;
       config = data.config;
       render();
-      setInterval(rotate, ROTATE_MS);
+      setInterval(() => {
+        // Не гортаємо автоматично, поки відкрита дебаг-панель (D) — щоб можна було спокійно тестувати
+        if (document.getElementById('debugPanel').classList.contains('show')) return;
+        rotate();
+      }, ROTATE_MS);
       setInterval(async () => {
         const fresh = await loadData();
         teachers = fresh.teachers;
