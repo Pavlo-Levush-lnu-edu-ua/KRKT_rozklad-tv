@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Розклад — TV</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a1120;
+      --panel: #101a2e;
+      --panel2: #0d1729;
+      --gold: #d4a72c;
+      --live: #ff6b35;
+      --text: #f4f0e6;
+      --muted: #71839b;
+      --divider: #24334d;
+      --today: rgba(212,167,44,.10);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, sans-serif;
+    }
+
+    .board {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background:
+        radial-gradient(1100px 500px at 90% -10%, rgba(212,167,44,.09), transparent 60%),
+        var(--bg);
+    }
+
+    .topbar {
+      height: 86px;
+      flex: 0 0 86px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 38px 10px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .logo-img {
+      max-width: 260px;
+      max-height: 54px;
+      object-fit: contain;
+    }
+
+    .brand-title {
+      font-family: Unbounded, sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      white-space: nowrap;
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .week-badge {
+      border: 1px solid var(--gold);
+      border-radius: 20px;
+      color: var(--gold);
+      padding: 6px 14px;
+      font: 700 13px JetBrains Mono, monospace;
+      white-space: nowrap;
+    }
+
+    .clock {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      font: 700 31px JetBrains Mono, monospace;
+      color: var(--gold);
+      white-space: nowrap;
+    }
+
+    .clock .date {
+      color: var(--muted);
+      font: 400 15px Inter, sans-serif;
+      text-transform: capitalize;
+    }
+
+    .banner {
+      height: 58px;
+      flex: 0 0 58px;
+      background-size: cover;
+      background-position: center;
+      border-bottom: 1px solid var(--divider);
+    }
+
+    .day-head {
+      flex: 0 0 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 38px;
+    }
+
+    .day-head h1 {
+      font: 900 34px Unbounded, sans-serif;
+      text-transform: capitalize;
+    }
+
+    .day-head .info {
+      color: var(--muted);
+      font: 500 14px JetBrains Mono, monospace;
+    }
+
+    .scene {
+      flex: 1;
+      min-height: 0;
+      padding: 0 38px 10px;
+      opacity: 1;
+      transition: opacity .45s ease;
+    }
+
+    .scene.fade { opacity: 0; }
+
+    .slide {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Один день = одна велика таблиця */
+    .day-card {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      background: var(--panel);
+      border: 1px solid var(--divider);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .day-card.compact .day-card-title {
+      height: 38px;
+      flex-basis: 38px;
+      padding: 0 15px;
+    }
+
+    .day-card.compact .day-card-title h2 { font-size: 17px; }
+    .day-card.compact .day-card-title span { font-size: 11px; }
+
+    .day-card-title {
+      flex: 0 0 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 17px;
+      background: rgba(255,255,255,.025);
+      border-bottom: 1px solid var(--divider);
+    }
+
+    .day-card-title h2 {
+      font: 700 20px Unbounded, sans-serif;
+    }
+
+    .day-card-title h2.today { color: var(--gold); }
+
+    .day-card-title span {
+      color: var(--muted);
+      font: 500 12px JetBrains Mono, monospace;
+    }
+
+    .table-wrap {
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .schedule-table {
+      width: 100%;
+      height: 100%;
+      table-layout: fixed;
+      border-collapse: collapse;
+    }
+
+    .schedule-table th,
+    .schedule-table td {
+      border-right: 1px solid var(--divider);
+      border-bottom: 1px solid var(--divider);
+      overflow: hidden;
+    }
+
+    .schedule-table th:last-child,
+    .schedule-table td:last-child { border-right: 0; }
+
+    .schedule-table tr:last-child td { border-bottom: 0; }
+
+    .schedule-table thead tr { height: 52px; }
+
+    .schedule-table th {
+      background: #0c1628;
+      padding: 5px 4px;
+      vertical-align: middle;
+    }
+
+    .pair-head {
+      width: 104px;
+      color: var(--gold);
+      font: 700 11px JetBrains Mono, monospace;
+      text-transform: uppercase;
+    }
+
+    .teacher-head {
+      font: 700 11px Unbounded, sans-serif;
+      line-height: 1.2;
+      word-break: break-word;
+      hyphens: auto;
+    }
+
+    .teacher-head .initials {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      margin-bottom: 3px;
+      border-radius: 50%;
+      background: var(--gold);
+      color: var(--bg);
+      font: 700 9px Unbounded, sans-serif;
+    }
+
+    .schedule-table tbody tr {
+      height: calc((100% - 52px) / 8);
+    }
+
+    .pair-cell {
+      width: 104px;
+      padding: 4px 6px;
+      text-align: center;
+      background: rgba(255,255,255,.022);
+      vertical-align: middle;
+    }
+
+    .pair-cell .num {
+      color: var(--gold);
+      font: 700 16px Unbounded, sans-serif;
+    }
+
+    .pair-cell .time {
+      margin-top: 3px;
+      color: var(--muted);
+      font: 500 10px JetBrains Mono, monospace;
+      white-space: nowrap;
+    }
+
+    .lesson-cell {
+      padding: 5px 6px;
+      vertical-align: middle;
+      background: rgba(255,255,255,.008);
+    }
+
+    .lesson-cell.has-lesson {
+      background: rgba(255,255,255,.025);
+    }
+
+    .subject {
+      font-size: 11px;
+      font-weight: 600;
+      line-height: 1.18;
+      overflow-wrap: anywhere;
+    }
+
+    .meta {
+      margin-top: 3px;
+      display: flex;
+      justify-content: space-between;
+      gap: 4px;
+      color: var(--muted);
+      font: 500 9px JetBrains Mono, monospace;
+      white-space: nowrap;
+    }
+
+    .room { color: var(--gold); }
+
+    .lesson-cell.live {
+      background: linear-gradient(145deg, rgba(255,107,53,.19), rgba(255,107,53,.055));
+      box-shadow: inset 0 0 0 2px var(--live);
+    }
+
+    .live-dot {
+      color: var(--live);
+      font: 700 9px JetBrains Mono, monospace;
+    }
+
+    .empty-cell {
+      color: #2d3d56;
+      text-align: center;
+      font: 400 12px JetBrains Mono, monospace;
+    }
+
+    .footer {
+      flex: 0 0 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dots { display: flex; gap: 7px; }
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--divider);
+    }
+    .dot.active {
+      width: 24px;
+      border-radius: 5px;
+      background: var(--gold);
+    }
+
+    .empty-state {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 9px;
+      color: var(--muted);
+    }
+
+    .empty-state .big {
+      color: var(--text);
+      font: 700 25px Unbounded, sans-serif;
+    }
+
+    /* Дебаг */
+    .debug-panel {
+      display: none;
+      position: fixed;
+      left: 16px;
+      bottom: 16px;
+      z-index: 999;
+      padding: 14px 18px;
+      border: 1px solid var(--gold);
+      border-radius: 12px;
+      background: rgba(10,17,32,.96);
+      box-shadow: 0 8px 30px rgba(0,0,0,.5);
+      font: 13px JetBrains Mono, monospace;
+    }
+    .debug-panel.show { display: block; }
+    .debug-title { color: var(--gold); font: 700 13px Unbounded, sans-serif; margin-bottom: 10px; }
+    .debug-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+    .debug-label { color: var(--muted); min-width: 150px; }
+    .debug-value { font-weight: 700; }
+    .debug-btn {
+      padding: 5px 10px;
+      border: 1px solid var(--divider);
+      border-radius: 6px;
+      background: var(--panel);
+      color: var(--text);
+      cursor: pointer;
+      font: 12px JetBrains Mono, monospace;
+    }
+    .debug-btn.active {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--bg);
+    }
+
+    @media (max-width: 1500px) {
+      .schedule-table th.teacher-head { font-size: 9px; }
+      .subject { font-size: 10px; }
+      .meta { font-size: 8px; }
+      .pair-head, .pair-cell { width: 92px; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="board">
+  <div class="topbar">
+    <div class="brand">
+      <img id="logoImg" class="logo-img" style="display:none" alt="">
+      <div class="brand-title">Розклад</div>
+    </div>
+    <div class="top-right">
+      <div class="week-badge" id="weekbadge">—</div>
+      <div class="clock">
+        <span id="time">--:--:--</span>
+        <span class="date" id="date">—</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="banner" id="banner" style="display:none"></div>
+
+  <div class="day-head">
+    <h1 id="dayName">—</h1>
+    <div class="info" id="slideInfo"></div>
+  </div>
+
+  <div class="scene" id="scene">
+    <div id="slide" class="slide"></div>
+  </div>
+
+  <div class="footer">
+    <div class="dots" id="dots"></div>
+  </div>
+</div>
+
+<div class="debug-panel" id="debugPanel">
+  <div class="debug-title">Дебаг-режим <span style="color:var(--muted);font:400 11px Inter,sans-serif">(D — сховати)</span></div>
+  <div class="debug-row">
+    <span class="debug-label">День:</span>
+    <button class="debug-btn" data-day="auto">Авто</button>
+    <button class="debug-btn" data-day="Понеділок">Пн</button>
+    <button class="debug-btn" data-day="Вівторок">Вт</button>
+    <button class="debug-btn" data-day="Середа">Ср</button>
+    <button class="debug-btn" data-day="Четвер">Чт</button>
+    <button class="debug-btn" data-day="П'ятниця">Пт</button>
+  </div>
+  <div class="debug-row">
+    <span class="debug-label">Тиждень:</span>
+    <button class="debug-btn" data-week="auto">Авто</button>
+    <button class="debug-btn" data-week="numerator">Чисельник</button>
+    <button class="debug-btn" data-week="denominator">Знаменник</button>
+  </div>
+  <div class="debug-row">
+    <span class="debug-label">Слайд:</span>
+    <button class="debug-btn" id="dbgNextSlide">Наступний ▶</button>
+  </div>
+</div>
+
+<script>
+const DEFAULT_CONFIG = {
+  semesterStart: "2026-09-01",
+  scheduleUrl: "",
+  logo: "",
+  banner: ""
+};
+
+const WEEKDAYS = ["Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця"];
+
+const PERIODS = [
+  { num: 1, time: "08:30-09:50" },
+  { num: 2, time: "10:10-11:30" },
+  { num: 3, time: "11:50-13:10" },
+  { num: 4, time: "13:30-14:50" },
+  { num: 5, time: "15:05-16:25" },
+  { num: 6, time: "16:40-18:00" },
+  { num: 7, time: "18:10-19:30" },
+  { num: 8, time: "19:40-21:00" }
+];
+
+/* ТЗ:
+   Слайд 1 — активний день.
+   Слайд 2 — два з решти днів.
+   Слайд 3 — останні два дні.
+   Час показу — 30 секунд.
+*/
+const ROTATE_MS = 30000;
+
+let teachers = [];
+let config = DEFAULT_CONFIG;
+let slides = [];
+let slideIdx = 0;
+let dayOverride = null;
+let weekOverride = null;
+
+function initials(name) {
+  return (name || "").trim().split(/\s+/).filter(Boolean)
+    .map(w => w[0]).slice(0, 2).join("").toUpperCase();
+}
+
+function toMin(hhmm) {
+  const [h, m] = hhmm.split(":").map(Number);
+  return h * 60 + m;
+}
+
+function mondayOf(d) {
+  const day = d.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate() + diff);
+}
+
+function getWeekType(semesterStart) {
+  const start = mondayOf(new Date(semesterStart + "T00:00:00"));
+  const now = mondayOf(new Date());
+  const diffDays = Math.round((now - start) / 86400000);
+  const weeksDiff = Math.floor(diffDays / 7);
+  return (((weeksDiff % 2) + 2) % 2) === 0 ? "numerator" : "denominator";
+}
+
+function applyBrand() {
+  const logo = document.getElementById("logoImg");
+  if (config.logo) {
+    logo.src = config.logo;
+    logo.style.display = "";
+  } else {
+    logo.style.display = "none";
+  }
+
+  const banner = document.getElementById("banner");
+  if (config.banner) {
+    banner.style.backgroundImage = `url("${config.banner}")`;
+    banner.style.display = "";
+  } else {
+    banner.style.display = "none";
+  }
+}
+
+function getDayEntries(dayName, weekType) {
+  const result = {};
+  PERIODS.forEach(p => result[p.num] = []);
+
+  teachers.forEach(t => {
+    const week = (t.schedule && t.schedule[weekType]) || {};
+    const lessons = week[dayName] || [];
+
+    lessons.forEach(l => {
+      const period = Number(l.period);
+      if (!result[period]) return;
+
+      result[period].push({
+        teacher: t.name,
+        photo: t.photo,
+        subj: l.subj || "",
+        group: l.group || "",
+        room: l.room || "",
+        half: l.half || null
+      });
+    });
+  });
+
+  return result;
+}
+
+function getDayTeachers(dayName, weekType) {
+  const byPeriod = getDayEntries(dayName, weekType);
+  const map = new Map();
+
+  PERIODS.forEach(p => {
+    (byPeriod[p.num] || []).forEach(e => {
+      if (!map.has(e.teacher)) map.set(e.teacher, e);
+    });
+  });
+
+  return [...map.keys()].sort((a, b) => a.localeCompare(b, "uk"));
+}
+
+function lessonForTeacher(byPeriod, periodNum, teacherName) {
+  return (byPeriod[periodNum] || []).find(e => e.teacher === teacherName) || null;
+}
+
+function makeDayCard(dayName, weekType, isToday, compact) {
+  const byPeriod = getDayEntries(dayName, weekType);
+  const dayTeachers = getDayTeachers(dayName, weekType);
+
+  if (!dayTeachers.length) {
+    return `
+      <section class="day-card ${compact ? "compact" : ""}">
+        <div class="day-card-title">
+          <h2 class="${isToday ? "today" : ""}">${dayName}</h2>
+          <span>Занять немає</span>
+        </div>
+        <div class="empty-state">
+          <div class="big">Немає занять</div>
+          <div>Для цього дня за поточним типом тижня даних немає</div>
+        </div>
+      </section>`;
+  }
+
+  const now = new Date();
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+
+  const head = dayTeachers.map(name => `
+    <th class="teacher-head" title="${name}">
+      <span class="initials">${initials(name)}</span><br>
+      ${name}
+    </th>`).join("");
+
+  const rows = PERIODS.map(p => {
+    const [t1, t2] = p.time.split("-");
+    const isLive = isToday && nowMin >= toMin(t1) && nowMin <= toMin(t2);
+
+    const cells = dayTeachers.map(name => {
+      const lesson = lessonForTeacher(byPeriod, p.num, name);
+
+      if (!lesson) {
+        return `<td class="empty-cell">—</td>`;
+      }
+
+      const half = lesson.half ? `<span>${lesson.half}-ша пол.</span> ` : "";
+      const group = lesson.group ? `<span>${lesson.group}</span>` : "";
+      const room = lesson.room ? `<span class="room">ауд. ${lesson.room}</span>` : "";
+
+      return `
+        <td class="lesson-cell ${isLive ? "live" : "has-lesson"}">
+          <div class="subject">${half}${lesson.subj}</div>
+          <div class="meta">
+            <span>${group}</span>
+            <span>${room}</span>
+          </div>
+        </td>`;
+    }).join("");
+
+    return `
+      <tr>
+        <td class="pair-cell">
+          <div class="num">${p.num}</div>
+          <div class="time">${p.time}</div>
+          ${isLive ? `<div class="live-dot">● ЗАРАЗ</div>` : ""}
+        </td>
+        ${cells}
+      </tr>`;
+  }).join("");
+
+  return `
+    <section class="day-card ${compact ? "compact" : ""}">
+      <div class="day-card-title">
+        <h2 class="${isToday ? "today" : ""}">${dayName}</h2>
+        <span>${dayTeachers.length} викладач${dayTeachers.length === 1 ? "" : dayTeachers.length < 5 ? "і" : "ів"}</span>
+      </div>
+      <div class="table-wrap">
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th class="pair-head">ПАРА</th>
+              ${head}
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </section>`;
+}
+
+function buildSlides(todayName, weekType) {
+  const otherDays = WEEKDAYS.filter(d => d !== todayName);
+
+  const result = [];
+
+  /* Слайд 1: активний день — на весь екран */
+  if (todayName && WEEKDAYS.includes(todayName)) {
+    result.push({
+      title: todayName,
+      days: [todayName],
+      active: todayName
+    });
+  }
+
+  /* Слайди 2–3: по два інші дні на слайді */
+  result.push({
+    title: `${otherDays[0]} · ${otherDays[1]}`,
+    days: otherDays.slice(0, 2),
+    active: todayName
+  });
+
+  result.push({
+    title: `${otherDays[2]} · ${otherDays[3]}`,
+    days: otherDays.slice(2, 4),
+    active: todayName
+  });
+
+  return result;
+}
+
+function render() {
+  applyBrand();
+
+  const now = new Date();
+  const jsDay = now.getDay();
+  const realToday = jsDay >= 1 && jsDay <= 5 ? WEEKDAYS[jsDay - 1] : null;
+  const todayName = dayOverride || realToday;
+  const weekType = weekOverride || getWeekType(config.semesterStart);
+
+  document.getElementById("weekbadge").textContent =
+    weekType === "numerator" ? "Чисельник" : "Знаменник";
+
+  const slide = slides[slideIdx];
+  if (!slide) return;
+
+  document.getElementById("dayName").textContent =
+    slide.days.length === 1 ? slide.days[0] : slide.title;
+
+  document.getElementById("slideInfo").textContent =
+    `Слайд ${slideIdx + 1} з ${slides.length} · ${slideIdx === 0 ? "активний день" : "огляд тижня"}`;
+
+  const slideEl = document.getElementById("slide");
+
+  if (slide.days.length === 1) {
+    slideEl.innerHTML = makeDayCard(
+      slide.days[0], weekType,
+      slide.days[0] === realToday,
+      false
+    );
+  } else {
+    slideEl.innerHTML = slide.days.map(d =>
+      makeDayCard(d, weekType, d === realToday, true)
+    ).join("");
+  }
+
+  document.getElementById("dots").innerHTML =
+    slides.map((_, i) => `<div class="dot ${i === slideIdx ? "active" : ""}"></div>`).join("");
+}
+
+function rotateSlide() {
+  if (slides.length < 2) return;
+
+  const scene = document.getElementById("scene");
+  scene.classList.add("fade");
+
+  setTimeout(() => {
+    slideIdx = (slideIdx + 1) % slides.length;
+    render();
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => scene.classList.remove("fade"))
+    );
+  }, 450);
+}
+
+function updateDebug() {
+  document.querySelectorAll("[data-day]").forEach(btn => {
+    const active = btn.dataset.day === "auto"
+      ? dayOverride === null
+      : btn.dataset.day === dayOverride;
+    btn.classList.toggle("active", active);
+  });
+
+  document.querySelectorAll("[data-week]").forEach(btn => {
+    const active = btn.dataset.week === "auto"
+      ? weekOverride === null
+      : btn.dataset.week === weekOverride;
+    btn.classList.toggle("active", active);
+  });
+}
+
+document.addEventListener("keydown", e => {
+  if (e.key.toLowerCase() === "d") {
+    document.getElementById("debugPanel").classList.toggle("show");
+  }
+});
+
+document.querySelectorAll("[data-day]").forEach(btn => {
+  btn.onclick = () => {
+    dayOverride = btn.dataset.day === "auto" ? null : btn.dataset.day;
+    slideIdx = 0;
+    const realToday = WEEKDAYS[new Date().getDay() - 1];
+    slides = buildSlides(dayOverride || realToday, weekOverride || getWeekType(config.semesterStart));
+    updateDebug();
+    render();
+  };
+});
+
+document.querySelectorAll("[data-week]").forEach(btn => {
+  btn.onclick = () => {
+    weekOverride = btn.dataset.week === "auto" ? null : btn.dataset.week;
+    slideIdx = 0;
+    const realToday = WEEKDAYS[new Date().getDay() - 1];
+    slides = buildSlides(dayOverride || realToday, weekOverride || getWeekType(config.semesterStart));
+    updateDebug();
+    render();
+  };
+});
+
+document.getElementById("dbgNextSlide").onclick = rotateSlide;
+
+function tick() {
+  const now = new Date();
+  document.getElementById("time").textContent = now.toLocaleTimeString("uk-UA");
+  document.getElementById("date").textContent =
+    now.toLocaleDateString("uk-UA", {
+      weekday: "long",
+      day: "numeric",
+      month: "long"
+    });
+}
+
+setInterval(tick, 1000);
+tick();
+
+async function fetchJson(url) {
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error("bad status");
+  return res.json();
+}
+
+async function loadData() {
+  let payload = null;
+
+  try {
+    payload = await fetchJson("schedule.json");
+  } catch (e) {}
+
+  if (payload && payload.config && payload.config.scheduleUrl) {
+    try {
+      payload = await fetchJson(payload.config.scheduleUrl);
+    } catch (e) {}
+  }
+
+  if (!payload) {
+    try {
+      const raw = localStorage.getItem("rozklad_data");
+      if (raw) payload = JSON.parse(raw);
+    } catch (e) {}
+  }
+
+  if (payload && Array.isArray(payload.teachers) && payload.teachers.length) {
+    return {
+      teachers: payload.teachers,
+      config: Object.assign({}, DEFAULT_CONFIG, payload.config || {})
+    };
+  }
+
+  return { teachers: [], config: DEFAULT_CONFIG };
+}
+
+async function init() {
+  const data = await loadData();
+  teachers = data.teachers;
+  config = data.config;
+
+  const jsDay = new Date().getDay();
+  const realToday = jsDay >= 1 && jsDay <= 5 ? WEEKDAYS[jsDay - 1] : WEEKDAYS[0];
+
+  slides = buildSlides(
+    dayOverride || realToday,
+    weekOverride || getWeekType(config.semesterStart)
+  );
+
+  updateDebug();
+  render();
+
+  setInterval(rotateSlide, ROTATE_MS);
+
+  /* Дані оновлюються раз на хвилину, але поточний слайд не скидаємо */
+  setInterval(async () => {
+    const fresh = await loadData();
+    teachers = fresh.teachers;
+    config = fresh.config;
+
+    const jsDay2 = new Date().getDay();
+    const realToday2 = jsDay2 >= 1 && jsDay2 <= 5 ? WEEKDAYS[jsDay2 - 1] : WEEKDAYS[0];
+
+    slides = buildSlides(
+      dayOverride || realToday2,
+      weekOverride || getWeekType(config.semesterStart)
+    );
+
+    if (slideIdx >= slides.length) slideIdx = 0;
+    render();
+  }, 60000);
+}
+
+init();
+</script>
+</body>
+</html>
