@@ -276,58 +276,28 @@
       box-shadow: inset 0 0 0 2px var(--live);
     }
 
-    /* ---- Split cell for half-pairs ---- */
-    .cell.split {
-      padding: 0;
-      display: flex;
-      flex-direction: column;
+    /* ---- Пів-пари: клітинка показує одну половину за раз, з міткою в кутку і плавним переходом ---- */
+    .cell.half-pair {
+      transition: opacity 0.35s ease;
     }
 
-    .half-slot {
-      flex: 1;
-      padding: 4px 12px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      position: relative;
-      min-height: 0;
-      overflow: hidden;
+    .cell.half-fade {
+      opacity: 0;
     }
 
-    .half-slot:first-child {
-      border-bottom: 1px dashed var(--divider);
-    }
-
-    .half-slot.live {
-      background: linear-gradient(160deg, rgba(255, 107, 53, 0.18), rgba(255, 107, 53, 0.05));
-      box-shadow: inset 0 0 0 2px var(--live);
-    }
-
-    .half-slot .subj {
-      font-size: 15px;
-      font-weight: 600;
-      line-height: 1.2;
-    }
-
-    .half-slot .group,
-    .half-slot .room {
-      font-size: 12px;
-      margin-top: 2px;
-    }
-
-    .half-slot .empty-cell {
-      font-size: 13px;
-    }
-
-    .half-tag {
+    .half-indicator {
       font-family: 'JetBrains Mono', monospace;
       font-size: 9px;
+      font-weight: 700;
       color: var(--gold);
       text-transform: uppercase;
       letter-spacing: .3px;
       position: absolute;
-      top: 3px;
-      right: 8px;
+      top: 6px;
+      left: 10px;
+      background: rgba(212, 167, 44, 0.12);
+      padding: 2px 7px;
+      border-radius: 999px;
     }
 
     .live-tag {
@@ -581,6 +551,7 @@
 
     const ROTATE_MS = 8000; // однаковий час показу для КОЖНОГО викладача
     let teacherIdx = 0;
+    let halfToggle = 0; // 0 = показуємо 1-шу половину пів-пар, 1 = 2-гу
     let teachers = DEFAULT_TEACHERS;
     let config = DEFAULT_CONFIG;
 
@@ -738,15 +709,11 @@
           ${renderLessonInner(full, isLive)}
         </div>`;
           } else if (half1 || half2) {
-            html += `<div class="cell ${isToday ? 'today-col' : ''} split">
-          <div class="half-slot lesson ${isLive ? 'live' : ''}">
-            <span class="half-tag"></span>
-            ${half1 ? renderLessonInner(half1, isLive) : '<div class="empty-cell">—</div>'}
-          </div>
-          <div class="half-slot lesson ${isLive ? 'live' : ''}">
-            <span class="half-tag"></span>
-            ${half2 ? renderLessonInner(half2, isLive) : '<div class="empty-cell">—</div>'}
-          </div>
+            const shown = halfToggle === 0 ? half1 : half2;
+            const label = halfToggle === 0 ? '1-ша пол.' : '2-га пол.';
+            html += `<div class="cell half-pair ${isToday ? 'today-col' : ''} ${shown && isLive ? 'live' : ''}">
+          <span class="half-indicator">${label}</span>
+          ${shown ? renderLessonInner(shown, isLive) : '<div class="empty-cell">—</div>'}
         </div>`;
           } else {
             html += `<div class="cell ${isToday ? 'today-col' : ''}"><div class="empty-cell">—</div></div>`;
@@ -773,12 +740,25 @@
 
     const FADE_MS = 450; // має збігатись із transition в CSS (.scene)
 
+    let halfFlipTimer = null;
+
+    function scheduleHalfFlip() {
+      halfToggle = 0; // кожен новий слайд починається з 1-ї половини
+      if (halfFlipTimer) clearInterval(halfFlipTimer);
+      // перемикаємо рівно посередині часу показу слайду (напр. 8с слайд -> перемикання на 4-й секунді)
+      halfFlipTimer = setInterval(() => {
+        halfToggle = halfToggle === 0 ? 1 : 0;
+        render();
+      }, ROTATE_MS / 2);
+    }
+
     function rotate() {
       if (!teachers.length) return;
       const scene = document.getElementById('scene');
       scene.classList.add('fade');
       setTimeout(() => {
         teacherIdx = (teacherIdx + 1) % teachers.length;
+        scheduleHalfFlip();
         render();
         // невелика затримка, щоб браузер встиг застосувати новий вміст перед fade-in
         requestAnimationFrame(() => requestAnimationFrame(() => scene.classList.remove('fade')));
@@ -825,6 +805,7 @@
       const data = await loadData();
       teachers = data.teachers;
       config = data.config;
+      scheduleHalfFlip();
       render();
       setInterval(() => {
         // Не гортаємо автоматично, поки відкрита дебаг-панель (D) — щоб можна було спокійно тестувати
