@@ -383,6 +383,45 @@
     }
 
     /* ---- Debug panel ---- */
+    /* ---- Прихована кнопка повноекранного режиму (hover у правому верхньому куті) ---- */
+    .fs-trigger-zone {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 110px;
+      height: 110px;
+      z-index: 998;
+      /* невидима зона-пастка для наведення мишею/курсором пульта */
+    }
+
+    .fs-btn {
+      position: fixed;
+      top: 14px;
+      right: 14px;
+      z-index: 999;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      background: rgba(10, 17, 32, 0.92);
+      border: 1px solid var(--gold);
+      border-radius: 8px;
+      padding: 9px 16px;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-6px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .fs-trigger-zone:hover ~ .fs-btn,
+    .fs-btn:hover,
+    .fs-btn:focus {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
     .debug-panel {
       display: none;
       position: fixed;
@@ -487,6 +526,10 @@
       <div class="next-teacher" id="nextteacher">Далі: <b>—</b></div>
     </div>
   </div>
+
+  <!-- ==================== Прихована зона для входу в повноекранний режим (наведіть у правий верхній кут) ==================== -->
+  <div class="fs-trigger-zone" id="fsTriggerZone"></div>
+  <button class="fs-btn" id="fsBtn">⛶ Повноекранний режим</button>
 
   <!-- ==================== ДЕБАГ-ПАНЕЛЬ (натисніть «d», щоб показати/сховати) ==================== -->
   <div class="debug-panel" id="debugPanel">
@@ -605,7 +648,41 @@
       if (e.key.toLowerCase() === 'd') {
         document.getElementById('debugPanel').classList.toggle('show');
       }
+      if (e.key.toLowerCase() === 'f') {
+        toggleFullscreen();
+      }
     });
+
+    // ---- Повноекранний режим ----
+    function isFullscreen() {
+      return !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+    }
+
+    function updateFsBtnLabel() {
+      const btn = document.getElementById('fsBtn');
+      btn.textContent = isFullscreen() ? '⛶ Вийти з повноекранного' : '⛶ Повноекранний режим';
+    }
+
+    function toggleFullscreen() {
+      const el = document.documentElement;
+      if (!isFullscreen()) {
+        const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+        if (req) {
+          req.call(el).catch(err => console.warn('Fullscreen request failed:', err));
+        } else {
+          console.warn('Fullscreen API не підтримується цим браузером.');
+        }
+      } else {
+        const exit = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+        if (exit) exit.call(document);
+      }
+    }
+
+    document.getElementById('fsBtn').addEventListener('click', toggleFullscreen);
+    ['fullscreenchange', 'webkitfullscreenchange', 'msfullscreenchange'].forEach(ev => {
+      document.addEventListener(ev, updateFsBtnLabel);
+    });
+    updateFsBtnLabel();
     document.getElementById('dbgAuto').onclick = () => {debugWeekOverride = null; render();};
     document.getElementById('dbgNum').onclick = () => {debugWeekOverride = 'numerator'; render();};
     document.getElementById('dbgDen').onclick = () => {debugWeekOverride = 'denominator'; render();};
@@ -712,6 +789,7 @@
             const shown = halfToggle === 0 ? half1 : half2;
             const label = halfToggle === 0 ? '1-ша пол.' : '2-га пол.';
             html += `<div class="cell half-pair ${isToday ? 'today-col' : ''} ${shown && isLive ? 'live' : ''}">
+          <span class="half-indicator">${label}</span>
           ${shown ? renderLessonInner(shown, isLive) : '<div class="empty-cell">—</div>'}
         </div>`;
           } else {
