@@ -422,6 +422,62 @@
       transform: translateY(0);
     }
 
+    /* ---- Прихована панель швидкого переходу до викладача (hover у лівому верхньому куті) ---- */
+    .teacher-trigger-zone {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 110px;
+      height: 110px;
+      z-index: 998;
+    }
+
+    .teacher-jump-panel {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 240px;
+      background: rgba(10, 17, 32, 0.92);
+      border: 1px solid var(--gold);
+      border-radius: 8px;
+      padding: 10px 14px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-6px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .teacher-trigger-zone:hover ~ .teacher-jump-panel,
+    .teacher-jump-panel:hover,
+    .teacher-jump-panel:focus-within {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .teacher-jump-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .3px;
+    }
+
+    .teacher-jump-panel select {
+      background: var(--panel);
+      color: var(--text);
+      border: 1px solid var(--divider);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
     .debug-panel {
       display: none;
       position: fixed;
@@ -530,6 +586,13 @@
   <!-- ==================== Прихована зона для входу в повноекранний режим (наведіть у правий верхній кут) ==================== -->
   <div class="fs-trigger-zone" id="fsTriggerZone"></div>
   <button class="fs-btn" id="fsBtn">⛶ Повноекранний режим</button>
+
+  <!-- ==================== Прихована панель швидкого переходу до викладача (наведіть у лівий верхній кут) ==================== -->
+  <div class="teacher-trigger-zone" id="teacherTriggerZone"></div>
+  <div class="teacher-jump-panel" id="teacherJumpPanel">
+    <label class="teacher-jump-label" for="teacherJumpSelect">Перейти до викладача</label>
+    <select id="teacherJumpSelect"></select>
+  </div>
 
   <!-- ==================== ДЕБАГ-ПАНЕЛЬ (натисніть «d», щоб показати/сховати) ==================== -->
   <div class="debug-panel" id="debugPanel">
@@ -730,6 +793,10 @@
       document.getElementById('tname').textContent = teacher.name;
       document.getElementById('tsub').textContent = "Розклад занять";
 
+      const jumpSel = document.getElementById('teacherJumpSelect');
+      if (jumpSel.options.length !== teachers.length) refreshTeacherJumpOptions();
+      jumpSel.value = String(teacherIdx);
+
       const avatarEl = document.getElementById('avatar');
       if (teacher.photo) {
         const pos = teacher.photoPos || {x: 50, y: 50, zoom: 130};
@@ -788,7 +855,7 @@
           } else if (half1 || half2) {
             const shown = halfToggle === 0 ? half1 : half2;
             const label = halfToggle === 0 ? '1-ша пол.' : '2-га пол.';
-            html += `<div class="cell half-pair ${isToday ? 'today-col' : ''} ${shown && isLive ? 'live' : ''}">
+            html += `<div class="cell lesson half-pair ${isToday ? 'today-col' : ''} ${shown && isLive ? 'live' : ''}">
           <span class="half-indicator">${label}</span>
           ${shown ? renderLessonInner(shown, isLive) : '<div class="empty-cell">—</div>'}
         </div>`;
@@ -831,16 +898,32 @@
 
     function rotate() {
       if (!teachers.length) return;
+      jumpToTeacher((teacherIdx + 1) % teachers.length);
+    }
+
+    function jumpToTeacher(idx) {
+      if (!teachers.length || idx === teacherIdx) return;
       const scene = document.getElementById('scene');
       scene.classList.add('fade');
       setTimeout(() => {
-        teacherIdx = (teacherIdx + 1) % teachers.length;
+        teacherIdx = idx;
         scheduleHalfFlip();
         render();
         // невелика затримка, щоб браузер встиг застосувати новий вміст перед fade-in
         requestAnimationFrame(() => requestAnimationFrame(() => scene.classList.remove('fade')));
       }, FADE_MS);
     }
+
+    // ---- Прихована панель швидкого переходу до викладача ----
+    function refreshTeacherJumpOptions() {
+      const sel = document.getElementById('teacherJumpSelect');
+      sel.innerHTML = teachers.map((t, i) => `<option value="${i}">${t.name}</option>`).join('');
+      sel.value = String(teacherIdx);
+    }
+
+    document.getElementById('teacherJumpSelect').addEventListener('change', e => {
+      jumpToTeacher(Number(e.target.value));
+    });
 
     // ---- Завантаження даних ----
     // Пріоритет: 1) config.scheduleUrl (напр. пряме посилання на файл у OneDrive) якщо задано в самих даних
