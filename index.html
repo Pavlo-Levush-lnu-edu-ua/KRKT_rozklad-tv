@@ -901,7 +901,9 @@
     }
 
     function jumpToTeacher(idx) {
-      if (!teachers.length || idx === teacherIdx) return;
+      if (!teachers.length) return;
+      scheduleAutoRotate(); // завжди скидаємо таймер автоперемотки — і при ручному виборі, і при звичайній ротації
+      if (idx === teacherIdx) return;
       const scene = document.getElementById('scene');
       scene.classList.add('fade');
       setTimeout(() => {
@@ -911,6 +913,24 @@
         // невелика затримка, щоб браузер встиг застосувати новий вміст перед fade-in
         requestAnimationFrame(() => requestAnimationFrame(() => scene.classList.remove('fade')));
       }, FADE_MS);
+    }
+
+    // ---- Автоперемотка з можливістю скидання таймера (напр. після ручного вибору викладача) ----
+    let autoRotateTimer = null;
+
+    function scheduleAutoRotate() {
+      if (autoRotateTimer) clearTimeout(autoRotateTimer);
+      autoRotateTimer = setTimeout(autoRotateTick, ROTATE_MS);
+    }
+
+    function autoRotateTick() {
+      // Не гортаємо автоматично, поки відкрита дебаг-панель (D) — щоб можна було спокійно тестувати.
+      // Якщо викладачів кілька — rotate() сам перепланує таймер через jumpToTeacher().
+      if (!document.getElementById('debugPanel').classList.contains('show')) {
+        rotate();
+      } else {
+        scheduleAutoRotate();
+      }
     }
 
     // ---- Прихована панель швидкого переходу до викладача ----
@@ -966,11 +986,7 @@
       config = data.config;
       scheduleHalfFlip();
       render();
-      setInterval(() => {
-        // Не гортаємо автоматично, поки відкрита дебаг-панель (D) — щоб можна було спокійно тестувати
-        if (document.getElementById('debugPanel').classList.contains('show')) return;
-        rotate();
-      }, ROTATE_MS);
+      scheduleAutoRotate();
       setInterval(async () => {
         const fresh = await loadData();
         teachers = fresh.teachers;
