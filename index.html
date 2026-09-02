@@ -856,7 +856,6 @@
             const shown = halfToggle === 0 ? half1 : half2;
             const label = halfToggle === 0 ? '1-ша пол.' : '2-га пол.';
             html += `<div class="cell lesson half-pair ${isToday ? 'today-col' : ''} ${shown && isLive ? 'live' : ''}">
-          <span class="half-indicator">${label}</span>
           ${shown ? renderLessonInner(shown, isLive) : '<div class="empty-cell">—</div>'}
         </div>`;
           } else {
