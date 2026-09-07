@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Адмінка розкладу — TV</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link
@@ -37,13 +38,13 @@
     .wrap {
       max-width: 1150px;
       margin: 0 auto;
-      padding: 28px 24px 80px;
+      padding: clamp(16px, 3vw, 28px) clamp(12px, 3vw, 24px) 80px;
     }
 
     h1 {
       font-family: 'Unbounded', sans-serif;
       font-weight: 700;
-      font-size: 26px;
+      font-size: clamp(19px, 2.6vw, 26px);
       margin: 0 0 4px;
     }
 
@@ -197,6 +198,78 @@
       gap: 16px;
       align-items: flex-start;
       margin-bottom: 16px;
+    }
+
+    .collapse-toggle {
+      background: var(--panel2);
+      border: 1px solid var(--divider);
+      color: var(--muted);
+      width: 30px;
+      height: 30px;
+      flex-shrink: 0;
+      border-radius: 8px;
+      padding: 0;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .collapse-toggle:hover {
+      color: var(--text);
+    }
+
+    .teacher-card.collapsed {
+      padding: 10px 14px;
+      margin-bottom: 10px;
+    }
+
+    .teacher-collapsed-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .teacher-collapsed-main {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+      cursor: pointer;
+    }
+
+    .photo-preview-sm {
+      width: 38px;
+      height: 38px;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .teacher-collapsed-name {
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .teacher-collapsed-name.is-empty {
+      color: var(--muted);
+      font-style: italic;
+      font-weight: 400;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .teacher-collapsed-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      flex-shrink: 0;
+      white-space: nowrap;
     }
 
     .photo-block {
@@ -513,6 +586,126 @@
       margin-bottom: 12px;
       flex-wrap: wrap;
     }
+
+    /* =====================================================================
+       RESPONSIVE — ідея та стиль не змінюються, лише перебудова layout-у
+       під планшет і мобільний. Сторінка й так природньо скролиться
+       (це звичайна адмін-форма), тож головне завдання — прибрати фіксовані
+       min-width, через які поля/таблиця виходили за межі екрана.
+       ===================================================================== */
+    @media (max-width: 900px) {
+      .config-row .field input,
+      .field-input-small {
+        min-width: 0;
+        width: 100%;
+      }
+
+      .config-row .field,
+      .config-row .field[style] {
+        flex: 1 1 220px;
+      }
+
+      .brand-block {
+        min-width: 0;
+        flex: 1 1 100%;
+      }
+
+      .name-field input,
+      .photo-url-field input {
+        min-width: 0;
+        width: 100%;
+      }
+
+      .teacher-top .fields {
+        min-width: 0;
+        flex-basis: 100%;
+      }
+
+      .name-field,
+      .photo-url-field {
+        flex: 1 1 100%;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .teacher-top {
+        flex-wrap: wrap;
+      }
+
+      .teacher-top .photo-block {
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .teacher-top .fields {
+        order: 3;
+      }
+
+      .teacher-top > button.btn-danger {
+        margin-left: auto;
+      }
+
+      .photo-positioner {
+        width: auto;
+        flex: 1;
+        min-width: 140px;
+      }
+
+      /* ---- Таблиця занять: рядок → картка, комірка → підписаний рядок ---- */
+      table.lessons,
+      table.lessons thead,
+      table.lessons tbody,
+      table.lessons th,
+      table.lessons tr {
+        display: block;
+        width: 100%;
+      }
+
+      table.lessons thead { display: none; }
+
+      table.lessons tr {
+        background: var(--panel);
+        border: 1px solid var(--divider);
+        border-radius: 10px;
+        padding: 8px 10px;
+        margin-bottom: 10px;
+      }
+
+      table.lessons td {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
+        width: 100%;
+        padding: 6px 2px;
+      }
+
+      table.lessons td.narrow,
+      table.lessons td.half-col,
+      td.half-col {
+        width: 100%;
+      }
+
+      table.lessons td[data-label]::before {
+        content: attr(data-label);
+        font-size: 10px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: .3px;
+      }
+
+      table.lessons td.rm-col {
+        width: 100%;
+        text-align: right;
+        padding-top: 4px;
+      }
+
+      .toolbar { justify-content: flex-start; }
+      .toolbar .status { margin-left: 0; flex-basis: 100%; }
+
+      .teacher-collapsed-name { font-size: 13px; }
+      .teacher-collapsed-meta { display: none; }
+    }
   </style>
 </head>
 
@@ -577,6 +770,8 @@
     <div class="panel toolbar">
       <button class="btn-gold" id="btnAddTeacher">+ Додати викладача</button>
       <button class="btn-outline" id="btnSortAlpha">А-Я Сортувати за алфавітом</button>
+      <button class="btn-outline" id="btnCollapseAll">Згорнути всі картки</button>
+      <button class="btn-outline" id="btnExpandAll">Розгорнути всі картки</button>
       <button class="btn-outline" id="btnExport">Експортувати JSON (schedule.json)</button>
       <button class="btn-outline" id="btnImportTrigger">Імпортувати JSON</button>
       <input type="file" id="fileImport" accept="application/json">
@@ -659,6 +854,7 @@
     let teachers = [];
     let config = Object.assign({}, DEFAULT_CONFIG);
     let activeTab = {}; // {teacherIndex: 'numerator'|'denominator'}
+    let collapsedCards = {}; // {teacherIndex: true|false} — для швидкої навігації списком
 
     function loadState() {
       try {
@@ -697,6 +893,12 @@
 
     function photoPosOf(t) {return t.photoPos || {x: 50, y: 50, zoom: 130};}
 
+    function totalLessons(t) {
+      let n = 0;
+      ['numerator', 'denominator'].forEach(w => WEEKDAYS.forEach(d => n += (t.schedule[w][d] || []).length));
+      return n;
+    }
+
     function render() {
       document.getElementById('cfgSemesterStart').value = config.semesterStart || '';
       document.getElementById('cfgScheduleUrl').value = config.scheduleUrl || '';
@@ -709,11 +911,31 @@
       root.innerHTML = teachers.map((t, ti) => {
         const tab = activeTab[ti] || 'numerator';
         const week = t.schedule[tab];
+        const collapsed = !!collapsedCards[ti];
+        const photoHtml = t.photo ? `<img src="${esc(t.photo)}" style="object-position:${photoPosOf(t).x}% ${photoPosOf(t).y}%; transform:scale(${(photoPosOf(t).zoom / 100).toFixed(2)});">` : initials(t.name);
+
+        if (collapsed) {
+          return `
+    <div class="teacher-card collapsed">
+      <div class="teacher-collapsed-row">
+        <div class="teacher-collapsed-main" data-act="toggle-collapse" data-ti="${ti}" title="Розгорнути картку">
+          <button class="collapse-toggle" tabindex="-1">▸</button>
+          <div class="photo-preview photo-preview-sm">${photoHtml}</div>
+          <div class="teacher-collapsed-name ${t.name ? '' : 'is-empty'}">${esc(t.name) || 'Без імені'}</div>
+          <div class="teacher-collapsed-meta">${totalLessons(t)} пар</div>
+        </div>
+        <button class="btn-danger btn-small" data-act="rm-teacher" data-ti="${ti}">✕</button>
+      </div>
+    </div>
+  `;
+        }
+
         return `
     <div class="teacher-card">
       <div class="teacher-top">
+        <button class="collapse-toggle" data-act="toggle-collapse" data-ti="${ti}" title="Згорнути картку">▾</button>
         <div class="photo-block">
-          <div class="photo-preview">${t.photo ? `<img src="${esc(t.photo)}" style="object-position:${photoPosOf(t).x}% ${photoPosOf(t).y}%; transform:scale(${(photoPosOf(t).zoom / 100).toFixed(2)});">` : initials(t.name)}</div>
+          <div class="photo-preview">${photoHtml}</div>
           <div class="photo-actions">
             <button class="btn-outline btn-small" data-act="upload-photo" data-ti="${ti}">Фото</button>
             <button class="btn-danger btn-small" data-act="rm-photo" data-ti="${ti}">✕</button>
@@ -759,12 +981,12 @@
               <tbody>
                 ${lessons.map((l, li) => `
                   <tr>
-                    <td class="narrow">
+                    <td class="narrow" data-label="Пара">
                       <select data-act="lesson-period" data-ti="${ti}" data-week="${tab}" data-day="${day}" data-li="${li}">
                         ${PERIODS.map(p => `<option value="${p.num}" ${p.num === Number(l.period) ? 'selected' : ''}>${p.num} пара (${p.time})</option>`).join('')}
                       </select>
                     </td>
-                    <td class="half-col">
+                    <td class="half-col" data-label="Пів пари">
                       <label class="half-toggle">
                         <input type="checkbox" data-act="lesson-half-toggle" data-ti="${ti}" data-week="${tab}" data-day="${day}" data-li="${li}" ${l.half ? 'checked' : ''}>
                         Пів пари
@@ -775,9 +997,9 @@
                         <option value="2" ${Number(l.half) === 2 ? 'selected' : ''}>2-га половина</option>
                       </select>` : ''}
                     </td>
-                    <td><input data-act="lesson-subj" data-ti="${ti}" data-week="${tab}" data-day="${day}" data-li="${li}" value="${esc(l.subj)}" placeholder="Назва дисципліни (Л/Лаб/Пр)"></td>
-                    <td><input data-act="lesson-group" data-ti="${ti}" data-week="${tab}" data-day="${day}" data-li="${li}" value="${esc(l.group)}" placeholder="Група / підгрупа"></td>
-                    <td class="narrow"><input data-act="lesson-room" data-ti="${ti}" data-week="${tab}" data-day="${day}" data-li="${li}" value="${esc(l.room)}" placeholder="№6/Т"></td>
+                    <td data-label="Дисципліна"><input data-act="lesson-subj" data-ti="${ti}" data-week="${tab}" data-day="${day}" data-li="${li}" value="${esc(l.subj)}" placeholder="Назва дисципліни (Л/Лаб/Пр)"></td>
+                    <td data-label="Група"><input data-act="lesson-group" data-ti="${ti}" data-week="${tab}" data-day="${day}" data-li="${li}" value="${esc(l.group)}" placeholder="Група / підгрупа"></td>
+                    <td class="narrow" data-label="Аудиторія"><input data-act="lesson-room" data-ti="${ti}" data-week="${tab}" data-day="${day}" data-li="${li}" value="${esc(l.room)}" placeholder="№6/Т"></td>
                     <td class="rm-col"><button class="btn-danger btn-small" data-act="rm-lesson" data-ti="${ti}" data-week="${tab}" data-day="${day}" data-li="${li}">✕</button></td>
                   </tr>
                 `).join('')}
@@ -823,6 +1045,14 @@
         return;
       }
 
+      const collapseEl = e.target.closest('[data-act="toggle-collapse"]');
+      if (collapseEl) {
+        const cti = Number(collapseEl.dataset.ti);
+        collapsedCards[cti] = !collapsedCards[cti];
+        render();
+        return;
+      }
+
       const btn = e.target.closest('button[data-act]');
       if (!btn) return;
       const act = btn.dataset.act;
@@ -831,7 +1061,7 @@
       const day = btn.dataset.day;
       const li = btn.dataset.li !== undefined ? Number(btn.dataset.li) : null;
 
-      if (act === 'rm-teacher') {teachers.splice(ti, 1); delete activeTab[ti];}
+      if (act === 'rm-teacher') {teachers.splice(ti, 1); delete activeTab[ti]; delete collapsedCards[ti];}
       else if (act === 'copy-num-to-denom') {
         const hasDenomData = WEEKDAYS.some(d => (teachers[ti].schedule.denominator[d] || []).length);
         if (hasDenomData && !confirm('У знаменнику вже є пари — вони будуть замінені копією чисельника. Продовжити?')) return;
@@ -945,7 +1175,18 @@
       // activeTab прив'язаний до індексу в масиві, тож після зміни порядку скидаємо його на "чисельник" для всіх.
       teachers.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'uk', {sensitivity: 'base'}));
       activeTab = {};
+      collapsedCards = {};
       render(); save();
+    };
+
+    document.getElementById('btnCollapseAll').onclick = () => {
+      teachers.forEach((_, ti) => {collapsedCards[ti] = true;});
+      render();
+    };
+
+    document.getElementById('btnExpandAll').onclick = () => {
+      collapsedCards = {};
+      render();
     };
 
     document.getElementById('btnExport').onclick = () => {
@@ -968,6 +1209,7 @@
         teachers = data.teachers;
         config = Object.assign({}, DEFAULT_CONFIG, data.config || {});
         activeTab = {};
+        collapsedCards = {};
         render(); save();
       } catch (err) {
         alert('Не вдалось прочитати файл. Переконайтесь, що це коректний JSON, експортований з цієї адмінки.');
@@ -978,6 +1220,7 @@
     document.getElementById('btnClear').onclick = () => {
       if (!confirm('Видалити всіх викладачів? Дію не можна скасувати.')) return;
       teachers = [];
+      collapsedCards = {};
       render(); save();
     };
 
