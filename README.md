@@ -53,13 +53,6 @@ eTheta_deg,dF,omega
 
 ## Installation
 
-Клонувати репозиторій:
-
-```bash
-git clone <YOUR_REPOSITORY_URL>
-cd 3d_csv_viewer
-```
-
 Створити virtual environment:
 
 **Windows**
@@ -122,8 +115,6 @@ python main_1.py --help
 
 ## Virtual environment
 
-Віртуальне середовище `venv` не потрібно додавати до Git-репозиторію.
-
 Для відтворення середовища на іншому ПК:
 
 ```bash
@@ -143,42 +134,3 @@ pip install -r requirements.txt
 ├── data.csv
 └── venv/
 ```
-
-Папку `venv/` не потрібно завантажувати на GitHub.
-
-## Git
-
-Рекомендується створити `.gitignore`:
-
-```
-venv/
-__pycache__/
-*.pyc
-.idea/
-.vscode/
-```
-
-Після цього можна створити Git-репозиторій:
-
-```bash
-git init
-git add .
-git commit -m "Initial commit"
-```
-
-Після створення репозиторію на GitHub додайте remote:
-
-```bash
-git remote add origin <YOUR_REPOSITORY_URL>
-```
-
-і виконайте:
-
-```bash
-git branch -M main
-git push -u origin main
-```
-
-## License
-
-Вкажіть потрібну ліцензію для проєкту, наприклад MIT License.
