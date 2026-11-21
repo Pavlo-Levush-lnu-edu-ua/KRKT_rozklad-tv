@@ -706,6 +706,196 @@
       .teacher-collapsed-name { font-size: 13px; }
       .teacher-collapsed-meta { display: none; }
     }
+
+    /* ---- Реклама / оголошення ---- */
+    .field textarea {
+      background: var(--panel2);
+      border: 1px solid var(--divider);
+      color: var(--text);
+      border-radius: 7px;
+      padding: 8px 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      line-height: 1.4;
+      resize: vertical;
+    }
+
+    .field textarea:focus {
+      outline: 1px solid var(--gold);
+    }
+
+    .ads-summary {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 12px;
+    }
+
+    .ads-summary b {
+      color: var(--text);
+    }
+
+    .ad-card {
+      background: var(--panel2);
+      border: 1px solid var(--divider);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-top: 14px;
+    }
+
+    .ad-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .ad-enable {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .ad-enable input {
+      accent-color: var(--gold);
+    }
+
+    .ad-head-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      flex: 1;
+      min-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .ad-chip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--divider);
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .ad-chip.ok {
+      color: var(--ok);
+      border-color: var(--ok);
+    }
+
+    .ad-chip.wait {
+      color: var(--gold);
+      border-color: var(--gold);
+    }
+
+    .ad-chip.warn {
+      color: var(--danger);
+      border-color: var(--danger);
+    }
+
+    .ad-head-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .ad-head-actions button:disabled {
+      opacity: .35;
+      cursor: default;
+      filter: none;
+    }
+
+    .ad-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .ad-body {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .ad-fields,
+    .ad-side {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .ad-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .ad-row .field {
+      min-width: 120px;
+    }
+
+    .ad-row .field input,
+    .ad-row .field select {
+      width: 100%;
+    }
+
+    .ad-preview-box {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      border-radius: 10px;
+      border: 1px solid var(--divider);
+      background: #0a1120;
+    }
+
+    .ad-preview-box iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1920px;
+      height: 1080px;
+      border: 0;
+      transform-origin: top left;
+      pointer-events: none;
+    }
+
+    .ad-image-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .ad-image-info {
+      font-size: 11px;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .ad-image-info.big {
+      color: var(--gold);
+    }
+
+    .ad-image-opts {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .ad-image-opts .field {
+      min-width: 110px;
+    }
   </style>
 </head>
 
@@ -765,6 +955,26 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="panel" id="adsPanel">
+      <h2>Реклама / Оголошення <span class="opt" style="font-family:Inter,sans-serif;font-weight:400;font-size:12px;color:var(--muted)">(окремі слайди між викладачами на TV)</span></h2>
+      <div class="config-row">
+        <div class="field">
+          <label>Показувати оголошення після кожних N викладачів (0 — вимкнено)</label>
+          <input type="number" id="cfgAdsEvery" min="0" max="50" step="1" style="min-width:120px;width:120px">
+        </div>
+        <button class="btn-gold" id="btnAddAd">+ Додати оголошення</button>
+        <button class="btn-outline" id="btnAddAdSample">Додати приклад «ESP32 Лаб»</button>
+      </div>
+      <div class="config-hint">
+        Оголошення йдуть окремими слайдами: після кожних N викладачів TV показує наступне оголошення по колу. Вимкнені,
+        порожні та ті, що поза періодом «з — по», пропускаються. У заголовку <b>*слово*</b> підсвічується золотим.
+        Фото стискається до 1600&nbsp;px — це тримає <code>schedule.json</code> компактним (TV завантажує його щохвилини).
+        Праворуч від кожної картки — живий перегляд того, як слайд виглядатиме на TV.
+      </div>
+      <div class="ads-summary" id="adsSummary"></div>
+      <div id="adsRoot"></div>
     </div>
 
     <div class="panel toolbar">
@@ -844,7 +1054,7 @@
       return w;
     }
 
-    const DEFAULT_CONFIG = {semesterStart: "2026-09-07", scheduleUrl: "", logo: "", banner: ""};
+    const DEFAULT_CONFIG = {semesterStart: "2026-09-07", scheduleUrl: "", logo: "", banner: "", adsEvery: 4};
 
     // Дані більше не зашиваються у файл — адмінка стартує порожньою,
     // або підхоплює те, що вже збережено в цьому браузері / імпортований JSON.
@@ -852,6 +1062,7 @@
 
     // ---- Стан ----
     let teachers = [];
+    let ads = []; // рекламні слайди / оголошення
     let config = Object.assign({}, DEFAULT_CONFIG);
     let activeTab = {}; // {teacherIndex: 'numerator'|'denominator'}
     let collapsedCards = {}; // {teacherIndex: true|false} — для швидкої навігації списком
@@ -862,21 +1073,36 @@
         if (raw) {
           const parsed = JSON.parse(raw);
           if (parsed && Array.isArray(parsed.teachers)) {
-            return {teachers: parsed.teachers, config: Object.assign({}, DEFAULT_CONFIG, parsed.config || {})};
+            return {
+              teachers: parsed.teachers,
+              config: Object.assign({}, DEFAULT_CONFIG, parsed.config || {}),
+              ads: Array.isArray(parsed.ads) ? parsed.ads : []
+            };
           }
         }
       } catch (e) { }
-      return {teachers: JSON.parse(JSON.stringify(DEFAULT_TEACHERS)), config: Object.assign({}, DEFAULT_CONFIG)};
+      return {teachers: JSON.parse(JSON.stringify(DEFAULT_TEACHERS)), config: Object.assign({}, DEFAULT_CONFIG), ads: []};
     }
 
     const initial = loadState();
     teachers = initial.teachers;
     config = initial.config;
+    ads = initial.ads;
 
     let saveTimer = null;
     function save() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({config, teachers}));
       const s = document.getElementById('status');
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({config, teachers, ads}));
+      } catch (e) {
+        // сховище браузера переповнене (фото/реклама в base64 займають багато місця) — не мовчимо
+        s.textContent = '⚠ Не збережено: сховище браузера переповнене. Опублікуйте/експортуйте дані зараз і зменште фото.';
+        s.style.color = 'var(--danger)';
+        s.classList.add('show');
+        clearTimeout(saveTimer);
+        return;
+      }
+      s.style.color = '';
       s.textContent = 'Збережено ' + new Date().toLocaleTimeString('uk-UA');
       s.classList.add('show');
       clearTimeout(saveTimer);
@@ -1190,7 +1416,7 @@
     };
 
     document.getElementById('btnExport').onclick = () => {
-      const blob = new Blob([JSON.stringify({config, teachers}, null, 2)], {type: 'application/json'});
+      const blob = new Blob([JSON.stringify({config, teachers, ads}, null, 2)], {type: 'application/json'});
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url; a.download = 'schedule.json';
@@ -1208,9 +1434,10 @@
         if (!data || !Array.isArray(data.teachers)) throw new Error('bad format');
         teachers = data.teachers;
         config = Object.assign({}, DEFAULT_CONFIG, data.config || {});
+        ads = Array.isArray(data.ads) ? data.ads : [];
         activeTab = {};
         collapsedCards = {};
-        render(); save();
+        render(); renderAds(); save();
       } catch (err) {
         alert('Не вдалось прочитати файл. Переконайтесь, що це коректний JSON, експортований з цієї адмінки.');
       }
@@ -1309,7 +1536,7 @@
         }
 
         // 2) комітимо оновлений вміст
-        const jsonStr = JSON.stringify({config, teachers}, null, 2);
+        const jsonStr = JSON.stringify({config, teachers, ads}, null, 2);
         const body = {
           message: `Оновлення розкладу — ${new Date().toLocaleString('uk-UA')}`,
           content: utf8ToBase64(jsonStr),
@@ -1332,6 +1559,320 @@
     }
 
     document.getElementById('btnPublishGh').onclick = publishToGithub;
+
+
+    // ==================== Реклама / Оголошення ====================
+    const AD_LAYOUTS = [
+      ['split', 'Фото + текст'],
+      ['poster', 'Постер (фото на весь слайд)'],
+      ['text', 'Лише текст'],
+    ];
+
+    function todayStr() {
+      const d = new Date();
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+
+    function fmtDateUa(iso) {
+      const [y, m, d] = String(iso).split('-');
+      return `${d}.${m}.${y}`;
+    }
+
+    function newAd(extra) {
+      return Object.assign({
+        id: 'ad_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+        enabled: true, kicker: '', title: '', text: '', meta: '',
+        layout: 'split', duration: 12, startDate: '', endDate: '',
+        image: '', imageFit: 'cover', imageX: 50, imageY: 50,
+        qrUrl: '', qrLabel: ''
+      }, extra || {});
+    }
+
+    function adById(id) {return ads.find(a => a.id === id);}
+
+    // та сама логіка, що й на TV (index.html → adIsActive), але з поясненням, чому оголошення не показується
+    function adStatus(ad) {
+      const today = todayStr();
+      if (!(ad.title || ad.text || ad.image)) return {cls: 'warn', text: 'Порожнє — не показується'};
+      if (ad.enabled === false) return {cls: '', text: 'Вимкнено'};
+      if (ad.startDate && today < ad.startDate) return {cls: 'wait', text: 'Почнеться ' + fmtDateUa(ad.startDate)};
+      if (ad.endDate && today > ad.endDate) return {cls: '', text: 'Завершено ' + fmtDateUa(ad.endDate)};
+      return {cls: 'ok', text: 'Показується'};
+    }
+
+    function adImageInfo(ad) {
+      if (!ad.image) return {text: 'Зображення немає', big: false};
+      if (ad.image.startsWith('data:')) {
+        const kb = Math.round(ad.image.length * 0.75 / 1024);
+        return {text: `Завантажене фото, ≈ ${kb} КБ` + (kb > 400 ? ' — велике, збільшує schedule.json' : ''), big: kb > 400};
+      }
+      return {text: 'Зовнішнє посилання (завантажується з інтернету)', big: false};
+    }
+
+    function adCardHtml(ad, i) {
+      const id = esc(ad.id);
+      const st = adStatus(ad);
+      const info = adImageInfo(ad);
+      const isData = ad.image && ad.image.startsWith('data:');
+      return `
+      <div class="ad-card" data-id="${id}">
+        <div class="ad-head">
+          <label class="ad-enable"><input type="checkbox" data-f="enabled" data-id="${id}" ${ad.enabled !== false ? 'checked' : ''}> Показувати</label>
+          <div class="ad-head-title" data-role="title">${esc(String(ad.title || '').replace(/\*/g, '') || 'Без заголовка')}</div>
+          <span class="ad-chip ${st.cls}" data-role="chip">${esc(st.text)}</span>
+          <div class="ad-head-actions">
+            <button class="btn-outline btn-small" data-act="ad-up" data-id="${id}" ${i === 0 ? 'disabled' : ''} title="Вище">↑</button>
+            <button class="btn-outline btn-small" data-act="ad-down" data-id="${id}" ${i === ads.length - 1 ? 'disabled' : ''} title="Нижче">↓</button>
+            <button class="btn-outline btn-small" data-act="ad-dup" data-id="${id}">Дублювати</button>
+            <button class="btn-danger btn-small" data-act="ad-rm" data-id="${id}">✕</button>
+          </div>
+        </div>
+        <div class="ad-body">
+          <div class="ad-fields">
+            <div class="ad-row">
+              <div class="field" style="flex:1"><label>Мітка над заголовком</label>
+                <input type="text" data-f="kicker" data-id="${id}" value="${esc(ad.kicker)}" placeholder="напр. Лабораторія кафедри"></div>
+              <div class="field" style="flex:2"><label>Заголовок (*слово* — золотим)</label>
+                <input type="text" data-f="title" data-id="${id}" value="${esc(ad.title)}" placeholder="*ESP32* Лаб"></div>
+            </div>
+            <div class="field"><label>Текст</label>
+              <textarea rows="4" data-f="text" data-id="${id}" placeholder="Коротко: що, для кого, чому варто прийти">${esc(ad.text)}</textarea></div>
+            <div class="field"><label>Де / коли (кожен рядок — окремо)</label>
+              <textarea rows="2" data-f="meta" data-id="${id}" placeholder="ауд. 324/Т&#10;щовівторка, 15:05">${esc(ad.meta)}</textarea></div>
+            <div class="ad-row">
+              <div class="field" style="flex:1.6"><label>Макет</label>
+                <select data-f="layout" data-id="${id}">${AD_LAYOUTS.map(([v, t]) => `<option value="${v}" ${ad.layout === v ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
+              <div class="field" style="width:120px"><label>Тривалість, с</label>
+                <input type="number" min="4" max="120" step="1" data-f="duration" data-id="${id}" value="${esc(ad.duration)}"></div>
+              <div class="field" style="flex:1"><label>Показувати з</label>
+                <input type="date" data-f="startDate" data-id="${id}" value="${esc(ad.startDate)}"></div>
+              <div class="field" style="flex:1"><label>по (включно)</label>
+                <input type="date" data-f="endDate" data-id="${id}" value="${esc(ad.endDate)}"></div>
+            </div>
+            <div class="ad-row">
+              <div class="field" style="flex:2"><label>Посилання для QR-коду (необов'язково)</label>
+                <input type="text" data-f="qrUrl" data-id="${id}" value="${esc(ad.qrUrl)}" placeholder="https://..."></div>
+              <div class="field" style="flex:1"><label>Підпис під QR</label>
+                <input type="text" data-f="qrLabel" data-id="${id}" value="${esc(ad.qrLabel)}" placeholder="Реєстрація"></div>
+            </div>
+          </div>
+          <div class="ad-side">
+            <div class="ad-preview-box"><iframe src="./?adpreview=1" loading="lazy" tabindex="-1" title="Перегляд оголошення" data-id="${id}"></iframe></div>
+            <div class="ad-image-row">
+              <div class="brand-preview" data-role="thumb">${ad.image ? `<img src="${esc(ad.image)}">` : '<span class="brand-empty">Немає</span>'}</div>
+              <div class="brand-actions">
+                <button class="btn-outline btn-small" data-act="ad-upload" data-id="${id}">Завантажити фото</button>
+                <button class="btn-danger btn-small" data-act="ad-rm-image" data-id="${id}">✕</button>
+              </div>
+              <input class="field-input-small" type="text" data-f="image" data-id="${id}" value="${isData ? '' : esc(ad.image)}" placeholder="або URL зображення">
+            </div>
+            <div class="ad-image-info ${info.big ? 'big' : ''}" data-role="imginfo">${esc(info.text)}</div>
+            <div class="ad-image-opts">
+              <div class="field"><label>Вписування</label>
+                <select data-f="imageFit" data-id="${id}">
+                  <option value="cover" ${ad.imageFit !== 'contain' ? 'selected' : ''}>Заповнити (обрізати)</option>
+                  <option value="contain" ${ad.imageFit === 'contain' ? 'selected' : ''}>Вмістити цілком</option>
+                </select></div>
+              <div class="positioner-row" style="flex:1;min-width:120px"><label>X</label>
+                <input type="range" min="0" max="100" data-f="imageX" data-id="${id}" value="${esc(ad.imageX ?? 50)}"></div>
+              <div class="positioner-row" style="flex:1;min-width:120px"><label>Y</label>
+                <input type="range" min="0" max="100" data-f="imageY" data-id="${id}" value="${esc(ad.imageY ?? 50)}"></div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    // Масштабуємо iframe 1920×1080 під ширину блоку перегляду
+    const previewRO = new ResizeObserver(entries => {
+      entries.forEach(en => {
+        const f = en.target.querySelector('iframe');
+        if (f) f.style.transform = `scale(${en.contentRect.width / 1920})`;
+      });
+    });
+
+    function renderAds() {
+      document.getElementById('cfgAdsEvery').value = config.adsEvery ?? 4;
+      previewRO.disconnect();
+      const root = document.getElementById('adsRoot');
+      root.innerHTML = ads.length
+        ? ads.map(adCardHtml).join('')
+        : '<div class="empty-note" style="margin-top:14px">Оголошень ще немає. Натисніть «+ Додати оголошення» або додайте приклад.</div>';
+      root.querySelectorAll('.ad-preview-box').forEach(box => {
+        previewRO.observe(box);
+        const frame = box.querySelector('iframe');
+        frame.addEventListener('load', () => sendAdPreview(frame.dataset.id));
+      });
+      updateAdsSummary();
+    }
+
+    // ---- Живий перегляд: той самий рендер, що й на TV (index.html?adpreview=1) ----
+    const adPreviewTimers = {};
+    function queueAdPreview(id) {
+      clearTimeout(adPreviewTimers[id]);
+      adPreviewTimers[id] = setTimeout(() => sendAdPreview(id), 120);
+    }
+    function sendAdPreview(id) {
+      const ad = adById(id);
+      const frame = Array.from(document.querySelectorAll('#adsRoot iframe')).find(f => f.dataset.id === id);
+      if (!ad || !frame || !frame.contentWindow) return;
+      frame.contentWindow.postMessage({type: 'rozklad-ad-preview', ad}, '*');
+    }
+
+    let adsSummaryTimer = null;
+    function updateAdsSummary() {
+      clearTimeout(adsSummaryTimer);
+      adsSummaryTimer = setTimeout(() => {
+        const el = document.getElementById('adsSummary');
+        if (!el) return;
+        const every = Math.floor(Number(config.adsEvery)) || 0;
+        const active = ads.filter(a => adStatus(a).cls === 'ok').length;
+        const mb = (JSON.stringify({config, teachers, ads}).length / 1048576).toFixed(1);
+        el.innerHTML = (every > 0
+          ? `У ротації зараз: <b>${active}</b> з ${ads.length} оголошень · після кожних <b>${every}</b> викладачів`
+          : `<b>Показ реклами вимкнено</b> (N = 0)`) + ` · розмір даних для TV: <b>≈ ${mb} МБ</b>`;
+      }, 250);
+    }
+
+    // оновлює лише «живі» частини картки, не перебудовуючи її (щоб не збивати фокус і не перезавантажувати iframe)
+    function refreshAdCard(id) {
+      const ad = adById(id);
+      const card = Array.from(document.querySelectorAll('#adsRoot .ad-card')).find(c => c.dataset.id === id);
+      if (!ad || !card) return;
+      const st = adStatus(ad);
+      const chip = card.querySelector('[data-role=chip]');
+      chip.className = 'ad-chip ' + st.cls;
+      chip.textContent = st.text;
+      card.querySelector('[data-role=title]').textContent = String(ad.title || '').replace(/\*/g, '') || 'Без заголовка';
+      const info = adImageInfo(ad);
+      const infoEl = card.querySelector('[data-role=imginfo]');
+      infoEl.textContent = info.text;
+      infoEl.classList.toggle('big', info.big);
+      card.querySelector('[data-role=thumb]').innerHTML = ad.image ? `<img src="${esc(ad.image)}">` : '<span class="brand-empty">Немає</span>';
+      updateAdsSummary();
+    }
+
+    // ---- Редагування полів ----
+    document.getElementById('adsRoot').addEventListener('input', e => {
+      const el = e.target.closest('[data-f]');
+      if (!el) return;
+      const ad = adById(el.dataset.id);
+      if (!ad) return;
+      const f = el.dataset.f;
+      if (el.type === 'checkbox') ad[f] = el.checked;
+      else if (el.type === 'number' || el.type === 'range') {
+        const n = Number(el.value);
+        if (el.value === '' || !isFinite(n)) return;
+        ad[f] = n;
+      }
+      else ad[f] = el.value;
+      save();
+      refreshAdCard(ad.id);
+      queueAdPreview(ad.id);
+    });
+
+    document.getElementById('adsRoot').addEventListener('click', e => {
+      const btn = e.target.closest('[data-act]');
+      if (!btn) return;
+      const id = btn.dataset.id;
+      const idx = ads.findIndex(a => a.id === id);
+      if (idx < 0) return;
+      const act = btn.dataset.act;
+
+      if (act === 'ad-upload') {pendingAdImageId = id; adFileInput.click(); return;}
+      if (act === 'ad-rm-image') {
+        ads[idx].image = '';
+        ads[idx].imageX = 50; ads[idx].imageY = 50;
+        const urlInput = Array.from(document.querySelectorAll('#adsRoot [data-f=image]')).find(i => i.dataset.id === id);
+        if (urlInput) urlInput.value = '';
+        save(); refreshAdCard(id); queueAdPreview(id);
+        return;
+      }
+      if (act === 'ad-up' && idx > 0) [ads[idx - 1], ads[idx]] = [ads[idx], ads[idx - 1]];
+      else if (act === 'ad-down' && idx < ads.length - 1) [ads[idx + 1], ads[idx]] = [ads[idx], ads[idx + 1]];
+      else if (act === 'ad-dup') ads.splice(idx + 1, 0, newAd(Object.assign({}, JSON.parse(JSON.stringify(ads[idx])), {id: undefined, title: ads[idx].title ? ads[idx].title + ' (копія)' : ''})));
+      else if (act === 'ad-rm') {
+        if (!confirm('Видалити це оголошення? Дію не можна скасувати.')) return;
+        ads.splice(idx, 1);
+      }
+      else return;
+      save(); renderAds();
+    });
+
+    // ---- Фото: стискаємо до 1600 px / JPEG, щоб schedule.json не розбухав ----
+    async function compressImageFile(file, maxSide = 1600, quality = 0.82) {
+      const url = URL.createObjectURL(file);
+      try {
+        const img = await new Promise((resolve, reject) => {
+          const im = new Image();
+          im.onload = () => resolve(im);
+          im.onerror = reject;
+          im.src = url;
+        });
+        const k = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
+        const w = Math.max(1, Math.round(img.naturalWidth * k)), h = Math.max(1, Math.round(img.naturalHeight * k));
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#0d1526'; // прозорі PNG лягають на темний фон, а не на чорний
+        ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        return c.toDataURL('image/jpeg', quality);
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+    }
+
+    let pendingAdImageId = null;
+    const adFileInput = document.createElement('input');
+    adFileInput.type = 'file'; adFileInput.accept = 'image/*'; adFileInput.style.display = 'none';
+    document.body.appendChild(adFileInput);
+    adFileInput.onchange = async () => {
+      const file = adFileInput.files[0];
+      adFileInput.value = '';
+      const ad = adById(pendingAdImageId);
+      if (!file || !ad) return;
+      try {
+        ad.image = await compressImageFile(file);
+        ad.imageX = 50; ad.imageY = 50;
+        const urlInput = Array.from(document.querySelectorAll('#adsRoot [data-f=image]')).find(i => i.dataset.id === ad.id);
+        if (urlInput) urlInput.value = '';
+        save(); refreshAdCard(ad.id); queueAdPreview(ad.id);
+      } catch (err) {
+        alert('Не вдалось прочитати зображення. Спробуйте інший файл (JPG/PNG/WebP).');
+      }
+    };
+
+    // ---- Додавання ----
+    document.getElementById('btnAddAd').onclick = () => {
+      ads.push(newAd());
+      save(); renderAds();
+      const titles = document.querySelectorAll('#adsRoot [data-f=title]');
+      if (titles.length) titles[titles.length - 1].focus();
+    };
+
+    document.getElementById('btnAddAdSample').onclick = () => {
+      // Приклад створюється ВИМКНЕНИМ і з нейтральним текстом-заповнювачем — щоб він випадково не потрапив на екран
+      ads.push(newAd({
+        enabled: false,
+        kicker: 'Лабораторія кафедри',
+        title: '*ESP32* Лаб',
+        text: 'Коротко про лабораторію: чим займаєтесь, що можна зробити, кого запрошуєте.\nЗамініть цей текст своїм і додайте фото.',
+        meta: 'ауд. …\nдень і час',
+        layout: 'split',
+        duration: 12,
+        qrLabel: 'Детальніше'
+      }));
+      save(); renderAds();
+    };
+
+    document.getElementById('cfgAdsEvery').oninput = e => {
+      const n = Math.floor(Number(e.target.value));
+      config.adsEvery = isFinite(n) && n >= 0 ? n : 0;
+      save(); updateAdsSummary();
+    };
+
+    renderAds();
 
     render();
   </script>
