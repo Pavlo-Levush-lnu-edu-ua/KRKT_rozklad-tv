@@ -743,6 +743,24 @@
       overflow-wrap: anywhere;
     }
 
+    .ad-card.layout-video {
+      display: block;
+      background: #000;
+    }
+
+    .ad-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #000;
+    }
+
+    .ad-card.layout-video.fit-contain .ad-video {
+      object-fit: contain;
+    }
+
     .ad-media {
       position: relative;
       min-width: 0;
@@ -1450,7 +1468,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       if (!ad || ad.enabled === false) return false;
       if (ad.startDate && today < ad.startDate) return false;
       if (ad.endDate && today > ad.endDate) return false;
-      return !!(ad.title || ad.text || ad.image); // порожнє оголошення не показуємо
+      return !!(ad.title || ad.text || ad.image || ad.video); // порожнє оголошення не показуємо
     }
 
     function activeAds() {
@@ -1587,8 +1605,10 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     }
 
     function renderAd(ad) {
-      let layout = ['split', 'poster', 'text'].includes(ad.layout) ? ad.layout : 'split';
-      if (layout !== 'text' && !ad.image) layout = 'text'; // без картинки фото-макети не мають сенсу
+      let layout = ['split', 'poster', 'text', 'video'].includes(ad.layout) ? ad.layout : 'split';
+      if (layout === 'video' && !ad.video) layout = ad.image ? 'poster' : 'text';
+      if (layout !== 'text' && layout !== 'video' && !ad.image) layout = 'text'; // без картинки фото-макети не мають сенсу
+      if (layout === 'video') {renderVideoAd(ad); return;}
       const qr = ad.qrUrl ? qrSvg(ad.qrUrl) : '';
       const dur = adDurationSec(ad);
 
@@ -1615,6 +1635,32 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         const y = Number.isFinite(Number(ad.imageY)) ? Number(ad.imageY) : 50;
         img.style.objectPosition = `${x}% ${y}%`;
       }
+    }
+
+    // Відео-оголошення: MP4 лежить у репозиторії поруч з index.html (шлях/URL у ad.video).
+    // Тривалість слайду = тривалість ролика (визначається після завантаження метаданих);
+    // поки метаданих нема — діє ad.duration. Без звуку (потрібно для автозапуску на TV).
+    function renderVideoAd(ad) {
+      const preview = document.body.classList.contains('ad-preview');
+      adSceneEl.innerHTML =
+        `<div class="ad-card layout-video${ad.imageFit === 'contain' ? ' fit-contain' : ''}">` +
+        `<video class="ad-video" muted playsinline preload="auto"${preview ? ' loop' : ''}></video>` +
+        `</div>`;
+      const v = adSceneEl.querySelector('video');
+      v.muted = true;
+      if (!preview) {
+        v.addEventListener('loadedmetadata', () => {
+          if (view.type !== 'ad' || view.ad !== ad || !isFinite(v.duration)) return;
+          const sec = Math.min(300, Math.max(AD_MIN_SEC, v.duration));
+          scheduleAutoRotate(sec * 1000 + 500);
+        });
+        v.addEventListener('error', () => {
+          if (view.type === 'ad' && view.ad === ad) scheduleAutoRotate(800); // файл не знайдено — одразу далі
+        });
+      }
+      v.src = ad.video;
+      const p = v.play();
+      if (p && p.catch) p.catch(() => {});
     }
 
     // ---- Автоперемотка з можливістю скидання таймера (напр. після ручного вибору викладача) ----

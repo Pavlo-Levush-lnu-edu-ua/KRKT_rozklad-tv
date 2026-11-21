@@ -1566,6 +1566,7 @@
       ['split', 'Фото + текст'],
       ['poster', 'Постер (фото на весь слайд)'],
       ['text', 'Лише текст'],
+      ['video', 'Відео (MP4 на весь екран)'],
     ];
 
     function todayStr() {
@@ -1583,7 +1584,7 @@
         id: 'ad_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
         enabled: true, kicker: '', title: '', text: '', meta: '',
         layout: 'split', duration: 12, startDate: '', endDate: '',
-        image: '', imageFit: 'cover', imageX: 50, imageY: 50,
+        image: '', video: '', imageFit: 'cover', imageX: 50, imageY: 50,
         qrUrl: '', qrLabel: ''
       }, extra || {});
     }
@@ -1593,7 +1594,7 @@
     // та сама логіка, що й на TV (index.html → adIsActive), але з поясненням, чому оголошення не показується
     function adStatus(ad) {
       const today = todayStr();
-      if (!(ad.title || ad.text || ad.image)) return {cls: 'warn', text: 'Порожнє — не показується'};
+      if (!(ad.title || ad.text || ad.image || ad.video)) return {cls: 'warn', text: 'Порожнє — не показується'};
       if (ad.enabled === false) return {cls: '', text: 'Вимкнено'};
       if (ad.startDate && today < ad.startDate) return {cls: 'wait', text: 'Почнеться ' + fmtDateUa(ad.startDate)};
       if (ad.endDate && today > ad.endDate) return {cls: '', text: 'Завершено ' + fmtDateUa(ad.endDate)};
@@ -1649,6 +1650,9 @@
               <div class="field" style="flex:1"><label>по (включно)</label>
                 <input type="date" data-f="endDate" data-id="${id}" value="${esc(ad.endDate)}"></div>
             </div>
+            <div class="field"><label>Відео (для макета «Відео»): ім'я файлу в репозиторії або URL</label>
+              <input type="text" data-f="video" data-id="${id}" value="${esc(ad.video)}" placeholder="krkt-seminar-promo.mp4">
+              <div class="config-hint" style="margin-top:4px">Файл .mp4 (H.264) завантажте в GitHub поруч з index.html. Слайд триває стільки, скільки ролик; звук вимкнено. Для макета «Відео» решта полів ігнорується.</div></div>
             <div class="ad-row">
               <div class="field" style="flex:2"><label>Посилання для QR-коду (необов'язково)</label>
                 <input type="text" data-f="qrUrl" data-id="${id}" value="${esc(ad.qrUrl)}" placeholder="https://..."></div>
