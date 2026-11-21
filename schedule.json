@@ -2245,7 +2245,7 @@
       "endDate": "2026-12-08",
       "image": "",
       "video": "krkt-seminar-promo.mp4",
-      "imageFit": "contain",
+      "imageFit": "cover",
       "imageX": 49,
       "imageY": 45,
       "qrUrl": "",
