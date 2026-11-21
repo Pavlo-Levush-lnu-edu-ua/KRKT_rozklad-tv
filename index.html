@@ -748,6 +748,21 @@
       background: #0d1138;
     }
 
+    /* Відео-оголошення займає весь екран (без шапки, підвалу і рамки): ролик 16:9 заповнює екран 16:9 впритул.
+       z-index нижчий за службові панелі (debug / повноекранна кнопка — 998–999). */
+    .ann-scene.is-video {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      padding: 0;
+      background: #0d1138;
+    }
+
+    .ann-scene.is-video .ann-card {
+      border: 0;
+      border-radius: 0;
+    }
+
     .ann-video {
       position: absolute;
       inset: 0;
@@ -1605,6 +1620,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       let layout = ['split', 'poster', 'text', 'video'].includes(ad.layout) ? ad.layout : 'split';
       if (layout === 'video' && !ad.video) layout = ad.image ? 'poster' : 'text';
       if (layout !== 'text' && layout !== 'video' && !ad.image) layout = 'text'; // без картинки фото-макети не мають сенсу
+      annSceneEl.classList.remove('is-video');
       if (layout === 'video') {renderVideoAd(ad); return;}
       const qr = ad.qrUrl ? qrSvg(ad.qrUrl) : '';
       const dur = adDurationSec(ad);
@@ -1639,6 +1655,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     // поки метаданих нема — діє ad.duration. Без звуку (потрібно для автозапуску на TV).
     function renderVideoAd(ad) {
       const preview = document.body.classList.contains('ann-preview');
+      annSceneEl.classList.add('is-video');
       annSceneEl.innerHTML =
         `<div class="ann-card layout-video">` +
         `<video class="ann-video" muted playsinline preload="auto" disablepictureinpicture disableremoteplayback controlslist="nodownload noremoteplayback nofullscreen"${preview ? ' loop' : ''}></video>` +
