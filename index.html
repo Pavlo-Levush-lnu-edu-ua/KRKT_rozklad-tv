@@ -604,11 +604,11 @@
        Три макети: split (фото + текст), poster (фото на весь слайд), text.
        ===================================================================== */
     .scene[hidden],
-    .ad-scene[hidden] {
+    .ann-scene[hidden] {
       display: none;
     }
 
-    .ad-scene {
+    .ann-scene {
       flex: 1;
       min-height: 0;
       display: flex;
@@ -617,11 +617,11 @@
       transition: opacity 0.45s ease;
     }
 
-    .ad-scene.fade {
+    .ann-scene.fade {
       opacity: 0;
     }
 
-    .ad-card {
+    .ann-card {
       position: relative;
       flex: 1;
       min-width: 0;
@@ -635,16 +635,16 @@
         linear-gradient(145deg, #101a2e 0%, #0d1526 100%);
     }
 
-    .ad-card.layout-split {
+    .ann-card.layout-split {
       grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
     }
 
-    .ad-card.layout-text,
-    .ad-card.layout-poster {
+    .ann-card.layout-text,
+    .ann-card.layout-poster {
       grid-template-columns: minmax(0, 1fr);
     }
 
-    .ad-copy {
+    .ann-copy {
       position: relative;
       z-index: 1;
       display: flex;
@@ -658,7 +658,7 @@
       overflow: hidden;
     }
 
-    .ad-kicker {
+    .ann-kicker {
       font-family: 'JetBrains Mono', monospace;
       font-size: clamp(11px, 1.1vw, 19px);
       font-weight: 700;
@@ -671,7 +671,7 @@
       padding: 0.35em 1em;
     }
 
-    .ad-title {
+    .ann-title {
       font-family: 'Unbounded', sans-serif;
       font-weight: 900;
       font-size: clamp(26px, 4.6vw, 80px);
@@ -684,11 +684,11 @@
       overflow: hidden;
     }
 
-    .ad-title .accent {
+    .ann-title .accent {
       color: var(--gold);
     }
 
-    .ad-text {
+    .ann-text {
       font-size: clamp(15px, 1.95vw, 38px);
       line-height: 1.4;
       color: #d8d4c8;
@@ -700,7 +700,7 @@
       overflow: hidden;
     }
 
-    .ad-foot {
+    .ann-foot {
       display: flex;
       align-items: flex-end;
       gap: clamp(14px, 2vw, 32px);
@@ -708,7 +708,7 @@
       min-width: 0;
     }
 
-    .ad-qr {
+    .ann-qr {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -716,14 +716,14 @@
       flex-shrink: 0;
     }
 
-    .ad-qr svg {
+    .ann-qr svg {
       display: block;
       width: clamp(96px, 12vw, 230px);
       height: clamp(96px, 12vw, 230px);
       border-radius: 12px;
     }
 
-    .ad-qr-label {
+    .ann-qr-label {
       font-family: 'JetBrains Mono', monospace;
       font-size: clamp(10px, 1.05vw, 19px);
       color: var(--muted);
@@ -731,7 +731,7 @@
       max-width: 14em;
     }
 
-    .ad-meta {
+    .ann-meta {
       font-family: 'JetBrains Mono', monospace;
       font-size: clamp(12px, 1.4vw, 26px);
       line-height: 1.5;
@@ -743,12 +743,12 @@
       overflow-wrap: anywhere;
     }
 
-    .ad-card.layout-video {
+    .ann-card.layout-video {
       display: block;
       background: #0d1138;
     }
 
-    .ad-video {
+    .ann-video {
       position: absolute;
       inset: 0;
       width: 100%;
@@ -758,14 +758,14 @@
       pointer-events: none;
     }
 
-    .ad-media {
+    .ann-media {
       position: relative;
       min-width: 0;
       min-height: 0;
       background: #0b1322;
     }
 
-    .ad-media img {
+    .ann-media img {
       position: absolute;
       inset: 0;
       width: 100%;
@@ -773,12 +773,12 @@
       object-fit: cover;
     }
 
-    .ad-card.fit-contain .ad-media img {
+    .ann-card.fit-contain .ann-media img {
       object-fit: contain;
     }
 
     /* плавне зшивання фото з текстовою колонкою */
-    .layout-split .ad-media::after {
+    .layout-split .ann-media::after {
       content: '';
       position: absolute;
       inset: 0;
@@ -787,37 +787,37 @@
     }
 
     /* poster: фото на весь слайд, текст — внизу на градієнті */
-    .layout-poster .ad-media {
+    .layout-poster .ann-media {
       position: absolute;
       inset: 0;
     }
 
-    .layout-poster .ad-copy {
+    .layout-poster .ann-copy {
       align-self: end;
       justify-content: flex-end;
       padding-top: clamp(60px, 14vh, 200px);
       background: linear-gradient(0deg, rgba(8, 13, 25, 0.94) 0%, rgba(8, 13, 25, 0.75) 55%, rgba(8, 13, 25, 0) 100%);
     }
 
-    .layout-poster .ad-title {
+    .layout-poster .ann-title {
       -webkit-line-clamp: 2;
     }
 
-    .layout-poster .ad-text {
+    .layout-poster .ann-text {
       -webkit-line-clamp: 3;
     }
 
     /* text: тільки типографіка */
-    .layout-text .ad-title {
+    .layout-text .ann-title {
       font-size: clamp(32px, 6.4vw, 110px);
     }
 
-    .layout-text .ad-text {
+    .layout-text .ann-text {
       font-size: clamp(16px, 2.1vw, 38px);
     }
 
     /* смужка, що показує, скільки лишилось до кінця слайду */
-    .ad-progress {
+    .ann-progress {
       position: absolute;
       left: 0;
       right: 0;
@@ -827,39 +827,39 @@
       background: rgba(255, 255, 255, 0.06);
     }
 
-    .ad-progress i {
+    .ann-progress i {
       display: block;
       height: 100%;
       background: var(--gold);
       transform-origin: left center;
-      animation: adProgress var(--ad-dur, 12s) linear forwards;
+      animation: annProgress var(--ann-dur, 12s) linear forwards;
     }
 
-    @keyframes adProgress {
+    @keyframes annProgress {
       from { transform: scaleX(0); }
       to { transform: scaleX(1); }
     }
 
-    /* режим попереднього перегляду всередині адмінки (index.html?adpreview=1):
+    /* режим попереднього перегляду всередині адмінки (index.html?annpreview=1):
        тільки слайд, без шапки/підвалу/службових панелей */
-    body.ad-preview .topbar,
-    body.ad-preview .footer,
-    body.ad-preview .banner,
-    body.ad-preview .scene,
-    body.ad-preview .fs-trigger-zone,
-    body.ad-preview .fs-btn,
-    body.ad-preview .teacher-trigger-zone,
-    body.ad-preview .teacher-jump-panel,
-    body.ad-preview .debug-panel,
-    body.ad-preview .ad-progress {
+    body.ann-preview .topbar,
+    body.ann-preview .footer,
+    body.ann-preview .banner,
+    body.ann-preview .scene,
+    body.ann-preview .fs-trigger-zone,
+    body.ann-preview .fs-btn,
+    body.ann-preview .teacher-trigger-zone,
+    body.ann-preview .teacher-jump-panel,
+    body.ann-preview .debug-panel,
+    body.ann-preview .ann-progress {
       display: none !important;
     }
 
-    body.ad-preview .ad-scene {
+    body.ann-preview .ann-scene {
       padding: 0;
     }
 
-    body.ad-preview .ad-card {
+    body.ann-preview .ann-card {
       border-radius: 0;
       border: 0;
     }
@@ -935,20 +935,20 @@
       }
 
       /* Реклама на вузькому екрані: фото зверху, текст під ним */
-      .ad-scene {
+      .ann-scene {
         padding-bottom: 14px;
       }
 
-      .ad-card.layout-split {
+      .ann-card.layout-split {
         grid-template-columns: minmax(0, 1fr);
         grid-template-rows: minmax(180px, 36vh) auto;
       }
 
-      .layout-split .ad-media {
+      .layout-split .ann-media {
         order: -1;
       }
 
-      .layout-split .ad-media::after {
+      .layout-split .ann-media::after {
         background: linear-gradient(0deg, #101a2e 0%, rgba(16, 26, 46, 0) 30%);
       }
 
@@ -1043,7 +1043,7 @@
     </div>
 
     <!-- Рекламний слайд / оголошення (показується замість .scene) -->
-    <div class="ad-scene" id="adScene" hidden></div>
+    <div class="ann-scene" id="annScene" hidden></div>
 
     <div class="footer">
       <div class="dots" id="dots"></div>
@@ -1095,8 +1095,8 @@
     </div>
     <div class="debug-row">
       <span class="debug-label">Реклама:</span>
-      <button class="debug-btn" id="dbgShowAd">Показати наступну ▶</button>
-      <span class="debug-value" id="dbgAdInfo">—</span>
+      <button class="debug-btn" id="dbgShowAnn">Показати наступну ▶</button>
+      <span class="debug-value" id="dbgAnnInfo">—</span>
     </div>
   </div>
 
@@ -1149,7 +1149,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     let sinceAd = 1;              // скільки слайдів-викладачів показано з моменту останнього оголошення
     let adCursor = 0;             // яке оголошення йде наступним (по колу)
     const sceneEl = document.getElementById('scene');
-    const adSceneEl = document.getElementById('adScene');
+    const annSceneEl = document.getElementById('annScene');
     const AD_DEFAULT_SEC = 12, AD_MIN_SEC = 4, AD_MAX_SEC = 120;
 
     // ---- Мобільний layout: перемикач днів (замінює повну сітку на вузьких екранах) ----
@@ -1498,7 +1498,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
     function jumpToTeacher(idx) {showTeacher(idx, true);}
 
-    function currentSceneEl() {return view.type === 'ad' ? adSceneEl : sceneEl;}
+    function currentSceneEl() {return view.type === 'ad' ? annSceneEl : sceneEl;}
 
     // Плавний перехід: поточна сцена згасає, apply() міняє вміст і показує потрібну сцену, нова проявляється.
     function transitionTo(apply, ms) {
@@ -1520,8 +1520,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       transitionTo(() => {
         view = {type: 'teacher'};
         teacherIdx = idx;
-        adSceneEl.hidden = true;
-        adSceneEl.innerHTML = '';
+        annSceneEl.hidden = true;
+        annSceneEl.innerHTML = '';
         sceneEl.hidden = false;
         sceneEl.classList.add('fade');
         scheduleHalfFlip();
@@ -1537,8 +1537,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         if (halfFlipTimer) {clearInterval(halfFlipTimer); halfFlipTimer = null;}
         renderAd(ad);
         sceneEl.hidden = true;
-        adSceneEl.hidden = false;
-        adSceneEl.classList.add('fade');
+        annSceneEl.hidden = false;
+        annSceneEl.classList.add('fade');
         renderFooter();
       }, adDurationSec(ad) * 1000 + FADE_MS); // + час на згасання попереднього слайду
     }
@@ -1556,14 +1556,14 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     }
 
     function updateAdDebugInfo() {
-      const el = document.getElementById('dbgAdInfo');
+      const el = document.getElementById('dbgAnnInfo');
       if (!el) return;
       const n = Array.isArray(ads) ? ads.length : 0;
       const every = Math.floor(Number(config.adsEvery)) || 0;
       el.textContent = `активних: ${activeAds().length} з ${n}; ` + (every > 0 ? `після кожних ${every} викладачів` : 'показ вимкнено');
     }
 
-    document.getElementById('dbgShowAd').onclick = () => {
+    document.getElementById('dbgShowAnn').onclick = () => {
       const list = activeAds();
       if (!list.length) return;
       showAd(list[adCursor % list.length], true);
@@ -1609,23 +1609,23 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const qr = ad.qrUrl ? qrSvg(ad.qrUrl) : '';
       const dur = adDurationSec(ad);
 
-      adSceneEl.innerHTML =
-        `<div class="ad-card layout-${layout}${ad.imageFit === 'contain' ? ' fit-contain' : ''}" style="--ad-dur:${dur}s">` +
-        `<div class="ad-copy">` +
-        (ad.kicker ? `<span class="ad-kicker">${escHtml(ad.kicker)}</span>` : '') +
-        (ad.title ? `<h1 class="ad-title">${fmtTitle(ad.title)}</h1>` : '') +
-        (ad.text ? `<p class="ad-text">${escHtml(ad.text)}</p>` : '') +
-        ((qr || ad.meta) ? `<div class="ad-foot">` +
-          (qr ? `<div class="ad-qr">${qr}${ad.qrLabel ? `<span class="ad-qr-label">${escHtml(ad.qrLabel)}</span>` : ''}</div>` : '') +
-          (ad.meta ? `<div class="ad-meta">${escHtml(ad.meta)}</div>` : '') +
+      annSceneEl.innerHTML =
+        `<div class="ann-card layout-${layout}${ad.imageFit === 'contain' ? ' fit-contain' : ''}" style="--ann-dur:${dur}s">` +
+        `<div class="ann-copy">` +
+        (ad.kicker ? `<span class="ann-kicker">${escHtml(ad.kicker)}</span>` : '') +
+        (ad.title ? `<h1 class="ann-title">${fmtTitle(ad.title)}</h1>` : '') +
+        (ad.text ? `<p class="ann-text">${escHtml(ad.text)}</p>` : '') +
+        ((qr || ad.meta) ? `<div class="ann-foot">` +
+          (qr ? `<div class="ann-qr">${qr}${ad.qrLabel ? `<span class="ann-qr-label">${escHtml(ad.qrLabel)}</span>` : ''}</div>` : '') +
+          (ad.meta ? `<div class="ann-meta">${escHtml(ad.meta)}</div>` : '') +
           `</div>` : '') +
         `</div>` +
-        (layout !== 'text' ? `<div class="ad-media"><img alt=""></div>` : '') +
-        `<div class="ad-progress"><i></i></div>` +
+        (layout !== 'text' ? `<div class="ann-media"><img alt=""></div>` : '') +
+        `<div class="ann-progress"><i></i></div>` +
         `</div>`;
 
       // картинку задаємо через властивість, а не через рядок HTML (data-URI може бути дуже довгим)
-      const img = adSceneEl.querySelector('.ad-media img');
+      const img = annSceneEl.querySelector('.ann-media img');
       if (img) {
         img.src = ad.image;
         const x = Number.isFinite(Number(ad.imageX)) ? Number(ad.imageX) : 50;
@@ -1638,12 +1638,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     // Тривалість слайду = тривалість ролика (визначається після завантаження метаданих);
     // поки метаданих нема — діє ad.duration. Без звуку (потрібно для автозапуску на TV).
     function renderVideoAd(ad) {
-      const preview = document.body.classList.contains('ad-preview');
-      adSceneEl.innerHTML =
-        `<div class="ad-card layout-video">` +
-        `<video class="ad-video" muted playsinline preload="auto" disablepictureinpicture disableremoteplayback controlslist="nodownload noremoteplayback nofullscreen"${preview ? ' loop' : ''}></video>` +
+      const preview = document.body.classList.contains('ann-preview');
+      annSceneEl.innerHTML =
+        `<div class="ann-card layout-video">` +
+        `<video class="ann-video" muted playsinline preload="auto" disablepictureinpicture disableremoteplayback controlslist="nodownload noremoteplayback nofullscreen"${preview ? ' loop' : ''}></video>` +
         `</div>`;
-      const v = adSceneEl.querySelector('video');
+      const v = annSceneEl.querySelector('video');
       v.muted = true;
       if (!preview) {
         v.addEventListener('loadedmetadata', () => {
@@ -1742,18 +1742,18 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       }, 60000);
     }
 
-    // ---- Режим попереднього перегляду для адмінки: index.html?adpreview=1 ----
+    // ---- Режим попереднього перегляду для адмінки: index.html?annpreview=1 ----
     // Адмінка вставляє цю сторінку в iframe і надсилає оголошення через postMessage —
     // тож перегляд рендериться тим самим кодом, що й на TV. Дані/ротація тут не потрібні.
-    if (new URLSearchParams(location.search).has('adpreview')) {
-      document.body.classList.add('ad-preview');
+    if (new URLSearchParams(location.search).has('annpreview')) {
+      document.body.classList.add('ann-preview');
       window.addEventListener('message', e => {
         if (e.origin !== location.origin) return;
         const m = e.data;
-        if (!m || m.type !== 'rozklad-ad-preview' || !m.ad) return;
+        if (!m || m.type !== 'rozklad-ann-preview' || !m.ad) return;
         sceneEl.hidden = true;
-        adSceneEl.hidden = false;
-        adSceneEl.classList.remove('fade');
+        annSceneEl.hidden = false;
+        annSceneEl.classList.remove('fade');
         renderAd(m.ad);
       });
     } else {

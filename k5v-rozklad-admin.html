@@ -724,18 +724,18 @@
       outline: 1px solid var(--gold);
     }
 
-    .ads-summary {
+    .ann-summary {
       font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
       color: var(--muted);
       margin-top: 12px;
     }
 
-    .ads-summary b {
+    .ann-summary b {
       color: var(--text);
     }
 
-    .ad-card {
+    .ann-card {
       background: var(--panel2);
       border: 1px solid var(--divider);
       border-radius: 12px;
@@ -743,7 +743,7 @@
       margin-top: 14px;
     }
 
-    .ad-head {
+    .ann-head {
       display: flex;
       align-items: center;
       gap: 12px;
@@ -751,7 +751,7 @@
       margin-bottom: 12px;
     }
 
-    .ad-enable {
+    .ann-enable {
       display: flex;
       align-items: center;
       gap: 6px;
@@ -761,11 +761,11 @@
       white-space: nowrap;
     }
 
-    .ad-enable input {
+    .ann-enable input {
       accent-color: var(--gold);
     }
 
-    .ad-head-title {
+    .ann-head-title {
       font-family: 'Unbounded', sans-serif;
       font-size: 14px;
       font-weight: 600;
@@ -776,7 +776,7 @@
       white-space: nowrap;
     }
 
-    .ad-chip {
+    .ann-chip {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       padding: 3px 9px;
@@ -786,33 +786,33 @@
       white-space: nowrap;
     }
 
-    .ad-chip.ok {
+    .ann-chip.ok {
       color: var(--ok);
       border-color: var(--ok);
     }
 
-    .ad-chip.wait {
+    .ann-chip.wait {
       color: var(--gold);
       border-color: var(--gold);
     }
 
-    .ad-chip.warn {
+    .ann-chip.warn {
       color: var(--danger);
       border-color: var(--danger);
     }
 
-    .ad-head-actions {
+    .ann-head-actions {
       display: flex;
       gap: 6px;
     }
 
-    .ad-head-actions button:disabled {
+    .ann-head-actions button:disabled {
       opacity: .35;
       cursor: default;
       filter: none;
     }
 
-    .ad-body {
+    .ann-body {
       display: grid;
       grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
       gap: 18px;
@@ -820,35 +820,35 @@
     }
 
     @media (max-width: 900px) {
-      .ad-body {
+      .ann-body {
         grid-template-columns: 1fr;
       }
     }
 
-    .ad-fields,
-    .ad-side {
+    .ann-fields,
+    .ann-side {
       display: flex;
       flex-direction: column;
       gap: 12px;
       min-width: 0;
     }
 
-    .ad-row {
+    .ann-row {
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
     }
 
-    .ad-row .field {
+    .ann-row .field {
       min-width: 120px;
     }
 
-    .ad-row .field input,
-    .ad-row .field select {
+    .ann-row .field input,
+    .ann-row .field select {
       width: 100%;
     }
 
-    .ad-preview-box {
+    .ann-preview-box {
       position: relative;
       width: 100%;
       aspect-ratio: 16 / 9;
@@ -858,7 +858,7 @@
       background: #0a1120;
     }
 
-    .ad-preview-box iframe {
+    .ann-preview-box iframe {
       position: absolute;
       top: 0;
       left: 0;
@@ -869,31 +869,31 @@
       pointer-events: none;
     }
 
-    .ad-image-row {
+    .ann-image-row {
       display: flex;
       gap: 10px;
       align-items: center;
       flex-wrap: wrap;
     }
 
-    .ad-image-info {
+    .ann-image-info {
       font-size: 11px;
       color: var(--muted);
       font-family: 'JetBrains Mono', monospace;
     }
 
-    .ad-image-info.big {
+    .ann-image-info.big {
       color: var(--gold);
     }
 
-    .ad-image-opts {
+    .ann-image-opts {
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
       align-items: center;
     }
 
-    .ad-image-opts .field {
+    .ann-image-opts .field {
       min-width: 110px;
     }
   </style>
@@ -957,15 +957,15 @@
       </div>
     </div>
 
-    <div class="panel" id="adsPanel">
+    <div class="panel" id="annPanel">
       <h2>Реклама / Оголошення <span class="opt" style="font-family:Inter,sans-serif;font-weight:400;font-size:12px;color:var(--muted)">(окремі слайди між викладачами на TV)</span></h2>
       <div class="config-row">
         <div class="field">
           <label>Показувати оголошення після кожних N викладачів (0 — вимкнено)</label>
-          <input type="number" id="cfgAdsEvery" min="0" max="50" step="1" style="min-width:120px;width:120px">
+          <input type="number" id="cfgAnnEvery" min="0" max="50" step="1" style="min-width:120px;width:120px">
         </div>
-        <button class="btn-gold" id="btnAddAd">+ Додати оголошення</button>
-        <button class="btn-outline" id="btnAddAdSample">Додати приклад «ESP32 Лаб»</button>
+        <button class="btn-gold" id="btnAddAnn">+ Додати оголошення</button>
+        <button class="btn-outline" id="btnAddAnnSample">Додати приклад «ESP32 Лаб»</button>
       </div>
       <div class="config-hint">
         Оголошення йдуть окремими слайдами: після кожних N викладачів TV показує наступне оголошення по колу. Вимкнені,
@@ -973,8 +973,8 @@
         Фото стискається до 1600&nbsp;px — це тримає <code>schedule.json</code> компактним (TV завантажує його щохвилини).
         Праворуч від кожної картки — живий перегляд того, як слайд виглядатиме на TV.
       </div>
-      <div class="ads-summary" id="adsSummary"></div>
-      <div id="adsRoot"></div>
+      <div class="ann-summary" id="annSummary"></div>
+      <div id="annRoot"></div>
     </div>
 
     <div class="panel toolbar">
@@ -1581,7 +1581,7 @@
 
     function newAd(extra) {
       return Object.assign({
-        id: 'ad_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+        id: 'ann_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
         enabled: true, kicker: '', title: '', text: '', meta: '',
         layout: 'split', duration: 12, startDate: '', endDate: '',
         image: '', video: '', imageFit: 'cover', imageX: 50, imageY: 50,
@@ -1616,21 +1616,21 @@
       const info = adImageInfo(ad);
       const isData = ad.image && ad.image.startsWith('data:');
       return `
-      <div class="ad-card" data-id="${id}">
-        <div class="ad-head">
-          <label class="ad-enable"><input type="checkbox" data-f="enabled" data-id="${id}" ${ad.enabled !== false ? 'checked' : ''}> Показувати</label>
-          <div class="ad-head-title" data-role="title">${esc(String(ad.title || '').replace(/\*/g, '') || 'Без заголовка')}</div>
-          <span class="ad-chip ${st.cls}" data-role="chip">${esc(st.text)}</span>
-          <div class="ad-head-actions">
-            <button class="btn-outline btn-small" data-act="ad-up" data-id="${id}" ${i === 0 ? 'disabled' : ''} title="Вище">↑</button>
-            <button class="btn-outline btn-small" data-act="ad-down" data-id="${id}" ${i === ads.length - 1 ? 'disabled' : ''} title="Нижче">↓</button>
-            <button class="btn-outline btn-small" data-act="ad-dup" data-id="${id}">Дублювати</button>
-            <button class="btn-danger btn-small" data-act="ad-rm" data-id="${id}">✕</button>
+      <div class="ann-card" data-id="${id}">
+        <div class="ann-head">
+          <label class="ann-enable"><input type="checkbox" data-f="enabled" data-id="${id}" ${ad.enabled !== false ? 'checked' : ''}> Показувати</label>
+          <div class="ann-head-title" data-role="title">${esc(String(ad.title || '').replace(/\*/g, '') || 'Без заголовка')}</div>
+          <span class="ann-chip ${st.cls}" data-role="chip">${esc(st.text)}</span>
+          <div class="ann-head-actions">
+            <button class="btn-outline btn-small" data-act="ann-up" data-id="${id}" ${i === 0 ? 'disabled' : ''} title="Вище">↑</button>
+            <button class="btn-outline btn-small" data-act="ann-down" data-id="${id}" ${i === ads.length - 1 ? 'disabled' : ''} title="Нижче">↓</button>
+            <button class="btn-outline btn-small" data-act="ann-dup" data-id="${id}">Дублювати</button>
+            <button class="btn-danger btn-small" data-act="ann-rm" data-id="${id}">✕</button>
           </div>
         </div>
-        <div class="ad-body">
-          <div class="ad-fields">
-            <div class="ad-row">
+        <div class="ann-body">
+          <div class="ann-fields">
+            <div class="ann-row">
               <div class="field" style="flex:1"><label>Мітка над заголовком</label>
                 <input type="text" data-f="kicker" data-id="${id}" value="${esc(ad.kicker)}" placeholder="напр. Лабораторія кафедри"></div>
               <div class="field" style="flex:2"><label>Заголовок (*слово* — золотим)</label>
@@ -1640,7 +1640,7 @@
               <textarea rows="4" data-f="text" data-id="${id}" placeholder="Коротко: що, для кого, чому варто прийти">${esc(ad.text)}</textarea></div>
             <div class="field"><label>Де / коли (кожен рядок — окремо)</label>
               <textarea rows="2" data-f="meta" data-id="${id}" placeholder="ауд. 324/Т&#10;щовівторка, 15:05">${esc(ad.meta)}</textarea></div>
-            <div class="ad-row">
+            <div class="ann-row">
               <div class="field" style="flex:1.6"><label>Макет</label>
                 <select data-f="layout" data-id="${id}">${AD_LAYOUTS.map(([v, t]) => `<option value="${v}" ${ad.layout === v ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
               <div class="field" style="width:120px"><label>Тривалість, с</label>
@@ -1651,27 +1651,27 @@
                 <input type="date" data-f="endDate" data-id="${id}" value="${esc(ad.endDate)}"></div>
             </div>
             <div class="field"><label>Відео (для макета «Відео»): ім'я файлу в репозиторії або URL</label>
-              <input type="text" data-f="video" data-id="${id}" value="${esc(ad.video)}" placeholder="krkt-seminar-promo.mp4">
+              <input type="text" data-f="video" data-id="${id}" value="${esc(ad.video)}" placeholder="seminar-2026.mp4">
               <div class="config-hint" style="margin-top:4px">Файл .mp4 (H.264) завантажте в GitHub поруч з index.html. Слайд триває стільки, скільки ролик; звук вимкнено; кадр показується цілком (без обрізання). Для макета «Відео» решта полів ігнорується.</div></div>
-            <div class="ad-row">
+            <div class="ann-row">
               <div class="field" style="flex:2"><label>Посилання для QR-коду (необов'язково)</label>
                 <input type="text" data-f="qrUrl" data-id="${id}" value="${esc(ad.qrUrl)}" placeholder="https://..."></div>
               <div class="field" style="flex:1"><label>Підпис під QR</label>
                 <input type="text" data-f="qrLabel" data-id="${id}" value="${esc(ad.qrLabel)}" placeholder="Реєстрація"></div>
             </div>
           </div>
-          <div class="ad-side">
-            <div class="ad-preview-box"><iframe src="./?adpreview=1" loading="lazy" tabindex="-1" title="Перегляд оголошення" data-id="${id}"></iframe></div>
-            <div class="ad-image-row">
+          <div class="ann-side">
+            <div class="ann-preview-box"><iframe src="./?annpreview=1" loading="lazy" tabindex="-1" title="Перегляд оголошення" data-id="${id}"></iframe></div>
+            <div class="ann-image-row">
               <div class="brand-preview" data-role="thumb">${ad.image ? `<img src="${esc(ad.image)}">` : '<span class="brand-empty">Немає</span>'}</div>
               <div class="brand-actions">
-                <button class="btn-outline btn-small" data-act="ad-upload" data-id="${id}">Завантажити фото</button>
-                <button class="btn-danger btn-small" data-act="ad-rm-image" data-id="${id}">✕</button>
+                <button class="btn-outline btn-small" data-act="ann-upload" data-id="${id}">Завантажити фото</button>
+                <button class="btn-danger btn-small" data-act="ann-rm-image" data-id="${id}">✕</button>
               </div>
               <input class="field-input-small" type="text" data-f="image" data-id="${id}" value="${isData ? '' : esc(ad.image)}" placeholder="або URL зображення">
             </div>
-            <div class="ad-image-info ${info.big ? 'big' : ''}" data-role="imginfo">${esc(info.text)}</div>
-            <div class="ad-image-opts">
+            <div class="ann-image-info ${info.big ? 'big' : ''}" data-role="imginfo">${esc(info.text)}</div>
+            <div class="ann-image-opts">
               <div class="field"><label>Вписування</label>
                 <select data-f="imageFit" data-id="${id}">
                   <option value="cover" ${ad.imageFit !== 'contain' ? 'selected' : ''}>Заповнити (обрізати)</option>
@@ -1696,13 +1696,13 @@
     });
 
     function renderAds() {
-      document.getElementById('cfgAdsEvery').value = config.adsEvery ?? 4;
+      document.getElementById('cfgAnnEvery').value = config.adsEvery ?? 4;
       previewRO.disconnect();
-      const root = document.getElementById('adsRoot');
+      const root = document.getElementById('annRoot');
       root.innerHTML = ads.length
         ? ads.map(adCardHtml).join('')
         : '<div class="empty-note" style="margin-top:14px">Оголошень ще немає. Натисніть «+ Додати оголошення» або додайте приклад.</div>';
-      root.querySelectorAll('.ad-preview-box').forEach(box => {
+      root.querySelectorAll('.ann-preview-box').forEach(box => {
         previewRO.observe(box);
         const frame = box.querySelector('iframe');
         frame.addEventListener('load', () => sendAdPreview(frame.dataset.id));
@@ -1710,7 +1710,7 @@
       updateAdsSummary();
     }
 
-    // ---- Живий перегляд: той самий рендер, що й на TV (index.html?adpreview=1) ----
+    // ---- Живий перегляд: той самий рендер, що й на TV (index.html?annpreview=1) ----
     const adPreviewTimers = {};
     function queueAdPreview(id) {
       clearTimeout(adPreviewTimers[id]);
@@ -1718,16 +1718,16 @@
     }
     function sendAdPreview(id) {
       const ad = adById(id);
-      const frame = Array.from(document.querySelectorAll('#adsRoot iframe')).find(f => f.dataset.id === id);
+      const frame = Array.from(document.querySelectorAll('#annRoot iframe')).find(f => f.dataset.id === id);
       if (!ad || !frame || !frame.contentWindow) return;
-      frame.contentWindow.postMessage({type: 'rozklad-ad-preview', ad}, '*');
+      frame.contentWindow.postMessage({type: 'rozklad-ann-preview', ad}, '*');
     }
 
-    let adsSummaryTimer = null;
+    let annSummaryTimer = null;
     function updateAdsSummary() {
-      clearTimeout(adsSummaryTimer);
-      adsSummaryTimer = setTimeout(() => {
-        const el = document.getElementById('adsSummary');
+      clearTimeout(annSummaryTimer);
+      annSummaryTimer = setTimeout(() => {
+        const el = document.getElementById('annSummary');
         if (!el) return;
         const every = Math.floor(Number(config.adsEvery)) || 0;
         const active = ads.filter(a => adStatus(a).cls === 'ok').length;
@@ -1741,11 +1741,11 @@
     // оновлює лише «живі» частини картки, не перебудовуючи її (щоб не збивати фокус і не перезавантажувати iframe)
     function refreshAdCard(id) {
       const ad = adById(id);
-      const card = Array.from(document.querySelectorAll('#adsRoot .ad-card')).find(c => c.dataset.id === id);
+      const card = Array.from(document.querySelectorAll('#annRoot .ann-card')).find(c => c.dataset.id === id);
       if (!ad || !card) return;
       const st = adStatus(ad);
       const chip = card.querySelector('[data-role=chip]');
-      chip.className = 'ad-chip ' + st.cls;
+      chip.className = 'ann-chip ' + st.cls;
       chip.textContent = st.text;
       card.querySelector('[data-role=title]').textContent = String(ad.title || '').replace(/\*/g, '') || 'Без заголовка';
       const info = adImageInfo(ad);
@@ -1757,7 +1757,7 @@
     }
 
     // ---- Редагування полів ----
-    document.getElementById('adsRoot').addEventListener('input', e => {
+    document.getElementById('annRoot').addEventListener('input', e => {
       const el = e.target.closest('[data-f]');
       if (!el) return;
       const ad = adById(el.dataset.id);
@@ -1775,7 +1775,7 @@
       queueAdPreview(ad.id);
     });
 
-    document.getElementById('adsRoot').addEventListener('click', e => {
+    document.getElementById('annRoot').addEventListener('click', e => {
       const btn = e.target.closest('[data-act]');
       if (!btn) return;
       const id = btn.dataset.id;
@@ -1783,19 +1783,19 @@
       if (idx < 0) return;
       const act = btn.dataset.act;
 
-      if (act === 'ad-upload') {pendingAdImageId = id; adFileInput.click(); return;}
-      if (act === 'ad-rm-image') {
+      if (act === 'ann-upload') {pendingAdImageId = id; adFileInput.click(); return;}
+      if (act === 'ann-rm-image') {
         ads[idx].image = '';
         ads[idx].imageX = 50; ads[idx].imageY = 50;
-        const urlInput = Array.from(document.querySelectorAll('#adsRoot [data-f=image]')).find(i => i.dataset.id === id);
+        const urlInput = Array.from(document.querySelectorAll('#annRoot [data-f=image]')).find(i => i.dataset.id === id);
         if (urlInput) urlInput.value = '';
         save(); refreshAdCard(id); queueAdPreview(id);
         return;
       }
-      if (act === 'ad-up' && idx > 0) [ads[idx - 1], ads[idx]] = [ads[idx], ads[idx - 1]];
-      else if (act === 'ad-down' && idx < ads.length - 1) [ads[idx + 1], ads[idx]] = [ads[idx], ads[idx + 1]];
-      else if (act === 'ad-dup') ads.splice(idx + 1, 0, newAd(Object.assign({}, JSON.parse(JSON.stringify(ads[idx])), {id: undefined, title: ads[idx].title ? ads[idx].title + ' (копія)' : ''})));
-      else if (act === 'ad-rm') {
+      if (act === 'ann-up' && idx > 0) [ads[idx - 1], ads[idx]] = [ads[idx], ads[idx - 1]];
+      else if (act === 'ann-down' && idx < ads.length - 1) [ads[idx + 1], ads[idx]] = [ads[idx], ads[idx + 1]];
+      else if (act === 'ann-dup') ads.splice(idx + 1, 0, newAd(Object.assign({}, JSON.parse(JSON.stringify(ads[idx])), {id: undefined, title: ads[idx].title ? ads[idx].title + ' (копія)' : ''})));
+      else if (act === 'ann-rm') {
         if (!confirm('Видалити це оголошення? Дію не можна скасувати.')) return;
         ads.splice(idx, 1);
       }
@@ -1839,7 +1839,7 @@
       try {
         ad.image = await compressImageFile(file);
         ad.imageX = 50; ad.imageY = 50;
-        const urlInput = Array.from(document.querySelectorAll('#adsRoot [data-f=image]')).find(i => i.dataset.id === ad.id);
+        const urlInput = Array.from(document.querySelectorAll('#annRoot [data-f=image]')).find(i => i.dataset.id === ad.id);
         if (urlInput) urlInput.value = '';
         save(); refreshAdCard(ad.id); queueAdPreview(ad.id);
       } catch (err) {
@@ -1848,14 +1848,14 @@
     };
 
     // ---- Додавання ----
-    document.getElementById('btnAddAd').onclick = () => {
+    document.getElementById('btnAddAnn').onclick = () => {
       ads.push(newAd());
       save(); renderAds();
-      const titles = document.querySelectorAll('#adsRoot [data-f=title]');
+      const titles = document.querySelectorAll('#annRoot [data-f=title]');
       if (titles.length) titles[titles.length - 1].focus();
     };
 
-    document.getElementById('btnAddAdSample').onclick = () => {
+    document.getElementById('btnAddAnnSample').onclick = () => {
       // Приклад створюється ВИМКНЕНИМ і з нейтральним текстом-заповнювачем — щоб він випадково не потрапив на екран
       ads.push(newAd({
         enabled: false,
@@ -1870,7 +1870,7 @@
       save(); renderAds();
     };
 
-    document.getElementById('cfgAdsEvery').oninput = e => {
+    document.getElementById('cfgAnnEvery').oninput = e => {
       const n = Math.floor(Number(e.target.value));
       config.adsEvery = isFinite(n) && n >= 0 ? n : 0;
       save(); updateAdsSummary();
