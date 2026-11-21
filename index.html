@@ -1476,7 +1476,15 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
     }
 
+    // Тестовий режим: index.html?ann (або ?ann=N — почати з N-го оголошення).
+    // Показує оголошення одразу і після кожного викладача, ігноруючи «Показувати» та дати.
+    const ANN_PARAM = new URLSearchParams(location.search).get('ann');
+    const ANN_TEST = ANN_PARAM !== null;
+
+    function adsEveryN() {return ANN_TEST ? 1 : Math.floor(Number(config.adsEvery));}
+
     function adIsActive(ad, today) {
+      if (ANN_TEST) return !!(ad && (ad.title || ad.text || ad.image || ad.video));
       if (!ad || ad.enabled === false) return false;
       if (ad.startDate && today < ad.startDate) return false;
       if (ad.endDate && today > ad.endDate) return false;
@@ -1496,7 +1504,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     // Чистий розрахунок (нічого не змінює) — використовується і для ротації, і для підпису «Далі».
     function planNext() {
       const list = activeAds();
-      const every = Math.floor(Number(config.adsEvery));
+      const every = adsEveryN();
       // два оголошення поспіль не показуємо
       if (view.type !== 'ad' && list.length && every > 0 && sinceAd >= every) {
         return {type: 'ad', ad: list[adCursor % list.length]};
@@ -1574,7 +1582,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const el = document.getElementById('dbgAnnInfo');
       if (!el) return;
       const n = Array.isArray(ads) ? ads.length : 0;
-      const every = Math.floor(Number(config.adsEvery)) || 0;
+      const every = adsEveryN() || 0;
       el.textContent = `активних: ${activeAds().length} з ${n}; ` + (every > 0 ? `після кожних ${every} викладачів` : 'показ вимкнено');
     }
 
@@ -1742,6 +1750,20 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       return {teachers: DEFAULT_TEACHERS, config: DEFAULT_CONFIG, ads: []};
     }
 
+    function startAnnTest() {
+      const badge = document.createElement('div');
+      badge.textContent = 'ТЕСТ ОГОЛОШЕНЬ';
+      badge.style.cssText = 'position:fixed;left:10px;top:10px;z-index:999;padding:4px 10px;border-radius:999px;' +
+        'background:#d4a72c;color:#0d1526;font:700 11px/1.2 monospace;letter-spacing:.08em;opacity:.85;pointer-events:none';
+      document.body.appendChild(badge);
+      const list = activeAds();
+      if (!list.length) {badge.textContent = 'ТЕСТ ОГОЛОШЕНЬ: оголошень немає'; return;}
+      const n = Math.floor(Number(ANN_PARAM));
+      const idx = n >= 1 ? Math.min(n, list.length) - 1 : 0;
+      adCursor = idx;
+      showAd(list[idx], true);
+    }
+
     async function init() {
       const data = await loadData();
       teachers = data.teachers;
@@ -1750,6 +1772,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       scheduleHalfFlip();
       render();
       scheduleAutoRotate();
+      if (ANN_TEST) startAnnTest();
       setInterval(async () => {
         const fresh = await loadData();
         teachers = fresh.teachers;

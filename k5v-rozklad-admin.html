@@ -971,7 +971,7 @@
         Оголошення йдуть окремими слайдами: після кожних N викладачів TV показує наступне оголошення по колу. Вимкнені,
         порожні та ті, що поза періодом «з — по», пропускаються. У заголовку <b>*слово*</b> підсвічується золотим.
         Фото стискається до 1600&nbsp;px — це тримає <code>schedule.json</code> компактним (TV завантажує його щохвилини).
-        Праворуч від кожної картки — живий перегляд того, як слайд виглядатиме на TV.
+        Праворуч від кожної картки — живий перегляд того, як слайд виглядатиме на TV. Кнопка «▶ Тест на TV» відкриває <code>/?ann=N</code>: TV одразу показує оголошення N і потім повторює їх після кожного викладача (ігноруючи «Показувати» та дати), але бере <b>опубліковані</b> дані — спершу опублікуйте зміни.
       </div>
       <div class="ann-summary" id="annSummary"></div>
       <div id="annRoot"></div>
@@ -1622,6 +1622,7 @@
           <div class="ann-head-title" data-role="title">${esc(String(ad.title || '').replace(/\*/g, '') || 'Без заголовка')}</div>
           <span class="ann-chip ${st.cls}" data-role="chip">${esc(st.text)}</span>
           <div class="ann-head-actions">
+            <a class="btn-outline btn-small" href="./?ann=${i + 1}" target="_blank" rel="noopener" title="Відкриває TV у тестовому режимі з цього оголошення (показує опубліковані дані)" style="text-decoration:none">▶ Тест на TV</a>
             <button class="btn-outline btn-small" data-act="ann-up" data-id="${id}" ${i === 0 ? 'disabled' : ''} title="Вище">↑</button>
             <button class="btn-outline btn-small" data-act="ann-down" data-id="${id}" ${i === ads.length - 1 ? 'disabled' : ''} title="Нижче">↓</button>
             <button class="btn-outline btn-small" data-act="ann-dup" data-id="${id}">Дублювати</button>
